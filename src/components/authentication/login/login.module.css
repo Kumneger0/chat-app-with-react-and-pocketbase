@@ -1,0 +1,49 @@
+.loginWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.loginWrapper div {
+  display: flex;
+  flex-direction: column;
+  height: 3rem;
+  margin: 2rem;
+}
+
+.WellcomeMessage {
+  text-align: center;
+}
+
+.WellcomeMessage h2,
+span {
+  margin-top: 10px;
+}
+
+.WellcomeMessage h2 {
+  font-size: 2rem;
+  color: beige;
+}
+
+.loginWrapper div input {
+  border: none;
+  margin-top: 1.2rem;
+  padding: 0.7rem;
+  width: 20rem;
+  border-radius: 10px;
+  background-color: #333 !important;
+}
+
+.loginWrapper div input:focus {
+  outline: none;
+}
+
+.orSignIn {
+  margin-top: -10%;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.orSignIn span {
+  text-align: center;
+}

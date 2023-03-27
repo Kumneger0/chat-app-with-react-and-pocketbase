@@ -1,0 +1,24 @@
+.chatHeadWrapper {
+  margin: 10% auto;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chatHeadWrapper button {
+  all: unset;
+
+  padding: 7px;
+  color: rgb(46, 222, 46);
+  background-color: #424141;
+}
+
+.chatHeadWrapper button:hover {
+  cursor: pointer;
+  background-color: #4eac6d;
+  color: #fff;
+}
+
+.chatHeadWrapper button:hover::after {
+  content: "add contact";
+}

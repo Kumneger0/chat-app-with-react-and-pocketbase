@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:ital,wght@1,100&family=Lora:ital@1&display=swap");
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Barlow", sans-serif;
+  font-family: "Lora", serif;
+}
+
+body {
+  width: 100vw;
+  background-color: #2e2e2e;
+}

@@ -1,0 +1,43 @@
+.modalBg {
+  background-color: #424141;
+}
+
+.email,
+.name {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  padding: 10px;
+}
+
+.email input,
+.name input {
+  padding: 10px;
+  background: #686666;
+  border: none;
+  color: #fff;
+  border: 10px;
+}
+
+.email input:focus,
+.name input:focus {
+  outline: none;
+}
+
+.inputWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Textarea {
+  width: 25rem;
+  height: 10rem;
+}
+
+.Button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,27 @@
+.sideBarIconsWrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.icons {
+  height: 100px;
+  /* background-color: greenyellow; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  all: unset;
+  width: 100px;
+  text-align: center;
+}
+
+.icons:hover {
+  cursor: pointer;
+}

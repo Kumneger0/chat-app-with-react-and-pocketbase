@@ -1,0 +1,81 @@
+.contactWrapper {
+  margin: 10% auto;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.contactWrapper button {
+  all: unset;
+
+  padding: 7px;
+  color: rgb(46, 222, 46);
+  background-color: #424141;
+}
+
+.contactWrapper button:hover {
+  cursor: pointer;
+  background-color: #4eac6d;
+  color: #fff;
+}
+
+.searchField {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.searchField input {
+  width: 90%;
+  padding: 10px;
+  border: none;
+  background-color: #424141;
+  border-radius: 10px;
+}
+
+.searchField input:focus {
+  outline: none;
+}
+
+.contactWrapper button:hover::after {
+  content: "Add Contact";
+}
+
+.contactList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px auto;
+}
+
+.eachContact {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px auto;
+  position: relative;
+}
+
+.eachContactIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.contactAction {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  width: 100px;
+  height: 100px;
+  background-color: #424141;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
