@@ -23,8 +23,8 @@ const style = {
 
 export default function BasicModal() {
   const user = useUserStore((state: any) => state.user);
-  const userRef = React.useRef();
-  const passRef = React.useRef();
+  const userRef = React.useRef<any>();
+  const passRef = React.useRef<any>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -38,6 +38,10 @@ export default function BasicModal() {
       );
       if (!findRequiredContact) {
         alert("no contact found");
+        return;
+      }
+      if (user.contacts.includes(findRequiredContact.id)) {
+        alert("Contact available already in your contact list");
         return;
       }
       await pb.collection("users").update(user.id, {

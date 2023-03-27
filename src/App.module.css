@@ -33,13 +33,13 @@
 
 .authWrapper {
   width: 100vw;
-  height: 100vh;
+  height: 120vh;
   background-color: #4eac6d;
 }
 
 .authSection {
   width: 60%;
-  height: 93%;
+  height: 95vh;
   background-color: #262626;
   position: absolute;
   top: 5%;

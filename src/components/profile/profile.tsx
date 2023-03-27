@@ -9,7 +9,7 @@ export default function Profile() {
         <div className={styles.coverImage}>
           <img
             src={
-              "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+              "https://images.pexels.com/photos/359989/pexels-photo-359989.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             }
             style={{ width: "100%", height: "100%" }}
             alt=""
@@ -18,7 +18,7 @@ export default function Profile() {
         <h4>My Profile</h4>
         <div className={styles.profilePic}>
           <img
-            src={`https://avatars.dicebear.com/api/initials/${user.name}.svg`}
+            src={`https://avatars.dicebear.com/api/initials/${user.username}.svg`}
             alt=""
           />
         </div>

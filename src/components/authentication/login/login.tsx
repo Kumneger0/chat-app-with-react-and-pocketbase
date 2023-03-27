@@ -1,11 +1,14 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import styles from "./login.module.css";
 import { Button } from "@mui/material";
 import { pb } from "../../../App";
 
+import { authStateContext } from "../../../App";
+
 export default function Login() {
-  const userRef = useRef();
-  const passRef = useRef();
+  const { setAuthState } = useContext(authStateContext);
+  const userRef = useRef<any>();
+  const passRef = useRef<any>();
 
   const login = async () => {
     // @ts-ignore
@@ -58,7 +61,8 @@ export default function Login() {
       <hr />
       <div className={styles.orSignIn}>
         <span>don't have an acount yet ?</span>
-        <Button>register</Button>
+        {/* @ts-ignore */}
+        <Button onClick={() => setAuthState("signup")}>register</Button>
       </div>
     </div>
   );

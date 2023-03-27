@@ -74,8 +74,25 @@
   justify-content: center;
   align-items: center;
   font-family: "Courier New", Courier, monospace;
+  z-index: 1;
+}
+
+.contactAction div {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 
 .icon:hover {
+  cursor: pointer;
+}
+
+.makeActionDisplayNone {
+  position: absolute;
+  top: 0;
+  right: -40px;
+}
+
+.makeActionDisplayNone:hover {
   cursor: pointer;
 }
