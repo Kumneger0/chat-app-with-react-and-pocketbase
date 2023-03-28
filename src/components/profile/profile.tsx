@@ -23,8 +23,8 @@ export default function Profile() {
           />
         </div>
         <div className={styles.nameAndInfo}>
-          <div>kumneger wondimu</div>
-          <div>Web developer</div>
+          <div>{user.username}</div>
+          <div>bio</div>
         </div>
       </div>
     </>

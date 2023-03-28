@@ -3,35 +3,29 @@ import SideBar from "./components/sidebar/sidebar";
 import Profile from "./components/profile/profile";
 import { create } from "zustand";
 import pocketbase from "pocketbase";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import Chat from "./components/chats/chat";
 import Setting from "./components/setting/Setting";
 import Contacts from "./components/contacts/Contacts";
 import Bookmarks from "@mui/icons-material/Bookmarks";
 import Auth from "./components/authentication/authWrapper/auth";
 import Chatarea from "./components/chatArea/chatarea";
+import { User, ContextType, SelectedItem } from "./types";
 
 export const pb = new pocketbase("http://127.0.0.1:8090");
-
-interface User {
-  user: any;
-  updateUser: (newUser: any) => any;
-}
-
-interface ContextType {
-  authState: string;
-  setAuthState: (auth: string) => void;
-}
 
 export const useUserStore = create<User>((set) => ({
   user: null,
   updateUser: (newUser: any) => set((state: any) => ({ user: newUser })),
 }));
 
-export const useSelectedItem = create((set) => ({
+export const useSelectedItem = create<SelectedItem>((set) => ({
   selectedItem: "Chats",
+  selectedConversation: null,
   updateSelectedItem: (item: any) =>
     set((state: any) => ({ selectedItem: item })),
+  updateSelectedConversation: (conversationId: string) =>
+    set((state: any) => ({ selectedConversation: conversationId })),
 }));
 
 export const authStateContext = createContext<Partial<ContextType>>({

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./contact.module.css";
 import BasicModal from "../createContactModal/Modal";
-import { pb } from "../../App";
+import { pb, useSelectedItem, useUserStore } from "../../App";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
-import { useUserStore } from "../../App";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClearIcon from "@mui/icons-material/Clear";
 import BlockIcon from "@mui/icons-material/Block";
@@ -12,6 +11,9 @@ import Button from "@mui/material/Button";
 
 export default function Contacts() {
   const user = useUserStore((state) => state.user);
+  const updateSelectedConversation = useSelectedItem(
+    (state: any) => state.updateSelectedConversation
+  );
   const searchRef = useRef();
   const contactActionRef = useRef<any[]>([]);
 
@@ -21,6 +23,7 @@ export default function Contacts() {
     const getContacts = async () => {
       const record = await pb.collection("users").getOne(user.id, {
         expand: "contacts",
+        $autoCancel: false,
       });
 
       setContacts(record.expand.contacts);
@@ -83,7 +86,11 @@ export default function Contacts() {
           {contacts?.length >= 1 ? (
             <>
               {contacts.map((contact: any, i: number) => (
-                <div key={contact} className={styles.eachContact}>
+                <div
+                  onClick={() => updateSelectedConversation(contact.id)}
+                  key={contact}
+                  className={styles.eachContact}
+                >
                   <img
                     className={styles.eachContactIcon}
                     src={`https://avatars.dicebear.com/api/initials/${contact.username}.svg`}
