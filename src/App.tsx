@@ -9,6 +9,7 @@ import Setting from "./components/setting/Setting";
 import Contacts from "./components/contacts/Contacts";
 import Bookmarks from "@mui/icons-material/Bookmarks";
 import Auth from "./components/authentication/authWrapper/auth";
+import Chatarea from "./components/chatArea/chatarea";
 
 export const pb = new pocketbase("http://127.0.0.1:8090");
 
@@ -74,11 +75,13 @@ function App() {
               {selectedItem == "Bookmarks" && <Bookmarks />}
               {selectedItem == "Profile" && <Profile />}
             </div>
-            <div className={styles.chatArea}>mainActionArea</div>
+            <div className={styles.chatArea}>
+              <Chatarea />
+            </div>
           </div>
-          <div className={styles.bottom}>
+          {/* <div className={styles.bottom}>
             <div className={styles.bottomArea}>bottomArea</div>
-          </div>{" "}
+          </div>{" "} */}
         </>
       ) : (
         <div className={styles.authWrapper}>

@@ -86,10 +86,10 @@ export default function Contacts() {
                 <div key={contact} className={styles.eachContact}>
                   <img
                     className={styles.eachContactIcon}
-                    src={`https://avatars.dicebear.com/api/initials/${contact.name}.svg`}
+                    src={`https://avatars.dicebear.com/api/initials/${contact.username}.svg`}
                     alt=""
                   />
-                  <div>{contact.name}</div>
+                  <div>{contact.username}</div>
                   <div
                     ref={contactActionRef.current[i]}
                     className={styles.contactAction}
