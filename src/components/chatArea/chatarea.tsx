@@ -60,48 +60,120 @@ export default function Chatarea() {
   async function sendMessage() {
     const { value } = msgRef.current;
     if (!value) return;
-    const { conversations } = await pb.collection("users").getOne(user.id);
-    const { conversation, userId } = conversations.find(
-      (conversation: any) => conversation.userId == selectedConversation
-    );
-    const newMessage = {
-      from: user.id,
-      to: userId,
-      text: value,
-      date: Date.now(),
-    };
-    conversation.push(newMessage);
-    const filteredCoversation = conversations.filter(
-      (conversation: any) => conversation.userId != userId
-    );
-    const finalMessage = [{ userId, conversation }];
-
-    if (filteredCoversation.length) {
-      await pb.collection("users").update(user.id, {
-        conversations: [...filteredCoversation, { userId, conversation }],
-      });
+    try {
+      const { conversations } = await pb.collection("users").getOne(user.id);
+      const { conversations: contactConversation } = await pb
+        .collection("users")
+        .getOne(selectedConversation);
+      if (!conversations) {
+        await pb.collection("users").update(user.id, {
+          conversations: [
+            {
+              userId: selectedConversation,
+              conversation: [
+                {
+                  from: user.id,
+                  to: selectedConversation,
+                  date: Date.now(),
+                  text: value,
+                },
+              ],
+            },
+          ],
+        });
+      }
+      if (!contactConversation) {
+        await pb.collection("users").update(selectedConversation, {
+          conversations: [
+            {
+              userId: user.id,
+              conversation: [
+                {
+                  from: user.id,
+                  to: selectedConversation,
+                  date: Date.now(),
+                  text: value,
+                },
+              ],
+            },
+          ],
+        });
+      }
+      if (conversations) {
+        const findconversationWithMe = conversations.find(
+          (conversation: any) => conversation.userId == selectedConversation
+        );
+        conversations.push({
+          userId: selectedConversation,
+          conversation: [
+            {
+              from: user.id,
+              to: selectedConversation,
+              date: Date.now(),
+              text: value,
+            },
+          ],
+        });
+        if (!findconversationWithMe) {
+          await pb.collection("users").update(user.id, {
+            conversations,
+          });
+        }
+        if (findconversationWithMe) {
+          findconversationWithMe.conversation.push({
+            from: user.id,
+            to: selectedConversation,
+            date: Date.now(),
+            text: value,
+          });
+          const filterMine = conversations.filter(
+            (conversation: any) => conversation.userId !== selectedConversation
+          );
+          filterMine.push(findconversationWithMe);
+          await pb.collection("users").update(user.id, {
+            conversations: filterMine,
+          });
+        }
+      }
+      if (contactConversation) {
+        const findconversationWithMe = contactConversation.find(
+          (conversation: any) => conversation.userId == user.id
+        );
+        if (!findconversationWithMe) {
+          await pb.collection("users").update(selectedConversation, {
+            conversations: conversations.push({
+              userId: user.id,
+              conversation: [
+                {
+                  from: user.id,
+                  to: selectedConversation,
+                  date: Date.now(),
+                  text: value,
+                },
+              ],
+            }),
+          });
+        }
+        if (findconversationWithMe) {
+          findconversationWithMe.conversation.push({
+            from: user.id,
+            to: selectedConversation,
+            date: Date.now(),
+            text: value,
+          });
+          const filterMine = conversations.filter(
+            (conversation: any) => conversation.userId !== user.id
+          );
+          filterMine.push(findconversationWithMe);
+          await pb.collection("users").update(selectedConversation, {
+            conversations: filterMine,
+          });
+        }
+      }
+      SetUpdateConversation(!updateConversation);
+    } catch (err) {
+      alert("err occured");
     }
-    if (filteredCoversation.length == 0) {
-      await pb.collection("users").update(user.id, {
-        conversations: finalMessage,
-      });
-    }
-    const ContactsConversation = await pb.collection("users").getOne(userId);
-    const myConversation = ContactsConversation.conversations.filter(
-      (conversation: any) => conversation.userId !== user.id
-    );
-    if (myConversation.length) {
-      await pb.collection("users").update(userId, {
-        conversations: [...myConversation, { userId: user.id, conversation }],
-      });
-    }
-
-    if (!myConversation.length) {
-      await pb.collection("users").update(userId, {
-        conversations: [{ userId: user.id, conversation }],
-      });
-    }
-    SetUpdateConversation((prv) => !prv);
   }
 
   return (
