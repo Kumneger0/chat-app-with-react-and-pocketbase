@@ -6,7 +6,7 @@
 }
 
 .userImageAndName {
-  margin-left: 20px;
+  margin-left: 3rem;
   width: 100%;
   display: flex;
   gap: 10px;
@@ -103,4 +103,46 @@
 
 .sendIcon:hover {
   cursor: pointer;
+}
+
+.backBtn {
+  display: none;
+}
+
+@media (width <= 1000px) {
+  .head {
+    width: 100%;
+  }
+}
+
+@media (width <= 1000px) {
+  .messageInput {
+    bottom: 10%;
+  }
+  .messageInput input {
+    width: 70%;
+  }
+  .backBtn {
+    display: initial;
+  }
+  .onlineStatus {
+    position: absolute;
+    left: 15%;
+  }
+}
+
+@media (width <= 600px) {
+  .messageInput {
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 4;
+  }
+  .messageInput input {
+    width: 80%;
+  }
+  .onlineStatus {
+    position: absolute;
+    left: 20%;
+  }
 }

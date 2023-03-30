@@ -10,7 +10,6 @@
 
 .icons {
   height: 100px;
-  /* background-color: greenyellow; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,4 +23,15 @@
 
 .icons:hover {
   cursor: pointer;
+}
+
+@media (width <= 1000px) {
+  .sideBarIconsWrapper {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .icons {
+    height: 20rem;
+  }
 }

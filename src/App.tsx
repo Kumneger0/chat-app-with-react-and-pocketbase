@@ -37,6 +37,9 @@ function App() {
   const selectedItem = useSelectedItem((state: any) => state.selectedItem);
   const updateUser = useUserStore((state: any) => state.updateUser);
   const [authState, setAuthState] = useState<string>("login");
+  const updateSelectedConversation = useSelectedItem(
+    (state) => state.updateSelectedConversation
+  );
 
   useEffect(() => {
     const userFromLocal = pb.authStore.model;
@@ -51,6 +54,10 @@ function App() {
         updateUser(null);
       }
     });
+    return () => {
+      pb.collection("users").unsubscribe();
+      updateSelectedConversation(null);
+    };
   }, []);
 
   return (

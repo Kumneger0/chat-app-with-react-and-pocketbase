@@ -88,7 +88,7 @@ export default function Contacts() {
               {contacts.map((contact: any, i: number) => (
                 <div
                   onClick={() => updateSelectedConversation(contact.id)}
-                  key={contact}
+                  key={i}
                   className={styles.eachContact}
                 >
                   <img

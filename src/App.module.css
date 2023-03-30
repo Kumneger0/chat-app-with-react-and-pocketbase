@@ -12,7 +12,6 @@
   width: 5rem;
   background-color: #424141;
   height: 100vh;
-  position: relative;
   position: fixed;
 }
 
@@ -22,6 +21,8 @@
   max-height: 100vh;
   margin-left: 7%;
   position: fixed;
+  left: 0rem;
+  z-index: -1;
 }
 .chatArea {
   width: calc(100vw - 25rem);
@@ -55,4 +56,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (width <= 1000px) {
+  .chatArea {
+    width: 100%;
+    background-color: black;
+    z-index: 1;
+  }
+  .sideBar {
+    bottom: 0;
+    width: 100vw;
+    height: 3rem;
+    z-index: 3;
+    opacity: 0.5;
+  }
+  .sideBar:hover {
+    opacity: 1;
+  }
 }

@@ -4,6 +4,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { useSelectedItem } from "../../App";
 import { pb } from "../../App";
 import { useUserStore } from "../../App";
+import { Record, UnsubscribeFunc } from "pocketbase";
 
 async function getConversationFromPb(userid: string, conversationId: string) {
   const user = await pb.collection("users").getOne(userid, {
@@ -28,13 +29,16 @@ async function getContactDetailFromPb(contactId: string) {
 }
 
 export default function Chatarea() {
-  const selectedConversation = useSelectedItem(
+  const selectedConversation: string = useSelectedItem(
     (state: any) => state.selectedConversation
+  );
+  const upDateSelectedConversation = useSelectedItem(
+    (state) => state.updateSelectedConversation
   );
   const user = useUserStore((state) => state.user);
   const [conversation, setConversation] = useState<any[]>();
   const [contactDetail, setContactDetail] = useState<any>(null);
-  const [updateConversation, SetUpdateConversation] = useState<boolean>(false);
+  const [conversationError, setConversationError] = useState<null | string>();
   const msgRef = useRef<any>();
   useEffect(() => {
     getDetail();
@@ -46,16 +50,27 @@ export default function Chatarea() {
           console.log(detail);
         }
         const res = await getConversationFromPb(user.id, selectedConversation);
-        if (res) {
+        if (res && res.userId == selectedConversation) {
           setConversation(res.conversation);
           return;
+        } else {
+          setConversationError("There was an error");
         }
         setConversation([]);
       }
     }
-  }, [selectedConversation, updateConversation]);
+  }, [selectedConversation]);
 
-  if (!contactDetail) return <></>;
+  let unsubscribe: Promise<UnsubscribeFunc>;
+
+  useEffect(() => {
+    return () => {
+      pb.collection("users").unsubscribe();
+      upDateSelectedConversation("");
+    };
+  }, []);
+
+  if (!selectedConversation) return <> </>;
 
   async function sendMessage() {
     const { value } = msgRef.current;
@@ -170,17 +185,25 @@ export default function Chatarea() {
           });
         }
       }
-      SetUpdateConversation(!updateConversation);
     } catch (err) {
       alert("err occured");
     }
+    msgRef.current.value = null;
   }
+
+  pb.collection("users").subscribe(user.id, async (record) => {
+    const responce = await getConversationFromPb(user.id, selectedConversation);
+    setConversation(responce?.conversation);
+  });
+
+  if (contactDetail?.id !== selectedConversation) return <></>;
 
   return (
     <>
       <div>
         <div className={styles.head}>
           <div className={styles.userImageAndName}>
+            <button className={styles.backBtn}>back btn</button>
             <img
               className={styles.userImage}
               src={`https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`}
@@ -192,44 +215,44 @@ export default function Chatarea() {
         </div>
       </div>
       <div className={styles.conversation}>
-        {conversation?.length
-          ? conversation.map((conversation: any) => {
-              return (
-                <>
-                  <div
-                    className={`${styles.messageInfo} ${
-                      conversation.from == user.id
-                        ? styles.you
-                        : styles.initials
-                    }`}
-                  >
-                    <div className={styles.picAndText}>
-                      <div className={styles.pic}>
-                        <img
-                          className={styles.sender}
-                          src={
-                            conversation.from == selectedConversation
-                              ? `https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`
-                              : `https://avatars.dicebear.com/api/initials/${user.username}.svg`
-                          }
-                          alt=""
-                        />
-                      </div>
-                      <div className={styles.mesgText}>{conversation.text}</div>
+        {conversation?.length && contactDetail?.id == selectedConversation ? (
+          conversation.map((conversation: any) => {
+            return (
+              <>
+                <div
+                  className={`${styles.messageInfo} ${
+                    conversation.from == user.id ? styles.you : styles.initials
+                  }`}
+                >
+                  <div className={styles.picAndText}>
+                    <div className={styles.pic}>
+                      <img
+                        className={styles.sender}
+                        src={
+                          conversation.from == selectedConversation
+                            ? `https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`
+                            : `https://avatars.dicebear.com/api/initials/${user.username}.svg`
+                        }
+                        alt=""
+                      />
                     </div>
-                    <div className={styles.dateInfo}>
-                      <span>
-                        {conversation.from == selectedConversation
-                          ? contactDetail.username
-                          : user.username}
-                      </span>
-                      <span> {conversation.date}</span>
-                    </div>
+                    <div className={styles.mesgText}>{conversation.text}</div>
                   </div>
-                </>
-              );
-            })
-          : null}
+                  <div className={styles.dateInfo}>
+                    <span>
+                      {conversation.from == selectedConversation
+                        ? contactDetail.username
+                        : "you"}
+                    </span>
+                    <span> {conversation.date}</span>
+                  </div>
+                </div>
+              </>
+            );
+          })
+        ) : (
+          <div>{conversationError && conversationError}</div>
+        )}
       </div>
       <div className={styles.messageInput}>
         <input ref={msgRef} placeholder="Type your message here" type="text" />
