@@ -11,6 +11,7 @@ import Bookmarks from "@mui/icons-material/Bookmarks";
 import Auth from "./components/authentication/authWrapper/auth";
 import Chatarea from "./components/chatArea/chatarea";
 import { User, ContextType, SelectedItem } from "./types";
+import { useOnlineStatus } from "./onlineStaus";
 
 export const pb = new pocketbase("http://127.0.0.1:8090");
 
@@ -32,6 +33,8 @@ export const authStateContext = createContext<Partial<ContextType>>({
 });
 
 function App() {
+  const isOnline = useOnlineStatus();
+  console.log(isOnline);
   const user = useUserStore((state: any) => state.user);
   const selectedItem = useSelectedItem((state: any) => state.selectedItem);
   const selectedConversation = useSelectedItem(

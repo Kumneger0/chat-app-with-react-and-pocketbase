@@ -10,7 +10,9 @@ export default function Chat() {
   const [chats, setChats] = useState<any[]>([]);
   useEffect(() => {
     async function getContactName(chatsId: string[]) {
-      const allUsers = await pb.collection("users").getFullList();
+      const allUsers = await pb
+        .collection("users")
+        .getFullList({ $autoCancel: false });
       return allUsers.filter((user) => chatsId.includes(user.id));
     }
     const getChatsFromPb = async () => {

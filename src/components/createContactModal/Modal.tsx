@@ -3,10 +3,12 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+//@ts-ignore
 import styles from "./modal.module.css";
 import Textarea from "@mui/joy/Textarea";
 import { pb } from "../../App";
 import { useUserStore } from "../../App";
+import { useInnerWidth } from "./useInnerWidth";
 
 const style = {
   position: "absolute" as "absolute",
@@ -22,6 +24,10 @@ const style = {
 };
 
 export default function BasicModal() {
+  const width = useInnerWidth();
+  let modalWidth =
+    Number(width) <= 600 ? Number(width) - Number(width) * 0.2 : 500;
+  style.width = modalWidth;
   const user = useUserStore((state: any) => state.user);
   const userRef = React.useRef<any>();
   const passRef = React.useRef<any>();
