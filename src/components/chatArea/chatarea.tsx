@@ -5,6 +5,7 @@ import { useSelectedItem } from "../../App";
 import { pb } from "../../App";
 import { useUserStore } from "../../App";
 import { Record, UnsubscribeFunc } from "pocketbase";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 
 async function getConversationFromPb(userid: string, conversationId: string) {
   const user = await pb.collection("users").getOne(userid, {
@@ -198,12 +199,22 @@ export default function Chatarea() {
 
   if (contactDetail?.id !== selectedConversation) return <></>;
 
+  function removeSelectedConversation() {
+    //@ts-ignore
+    upDateSelectedConversation(null);
+  }
+
   return (
     <>
       <div>
         <div className={styles.head}>
           <div className={styles.userImageAndName}>
-            <button className={styles.backBtn}>back btn</button>
+            <div
+              onClick={removeSelectedConversation}
+              className={styles.backBtn}
+            >
+              <KeyboardBackspaceIcon />
+            </div>
             <img
               className={styles.userImage}
               src={`https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`}

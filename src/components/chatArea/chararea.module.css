@@ -116,14 +116,12 @@
 }
 
 @media (width <= 1000px) {
-  .messageInput {
-    bottom: 10%;
-  }
   .messageInput input {
     width: 70%;
   }
   .backBtn {
     display: initial;
+    margin: 10px;
   }
   .onlineStatus {
     position: absolute;
@@ -143,6 +141,6 @@
   }
   .onlineStatus {
     position: absolute;
-    left: 20%;
+    left: 25%;
   }
 }

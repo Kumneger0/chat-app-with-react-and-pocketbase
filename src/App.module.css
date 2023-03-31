@@ -29,7 +29,7 @@
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.15),
-    hsla(0, 0%, 100%, 0)
+    rgba(255, 255, 255, 0)
   );
   position: absolute;
   right: 0;
@@ -61,8 +61,8 @@
 @media (width <= 1000px) {
   .chatArea {
     width: 100%;
-    background-color: black;
     z-index: 1;
+    background: rgba(255, 255, 255, 0);
   }
   .sideBar {
     bottom: 0;
@@ -73,5 +73,12 @@
   }
   .sideBar:hover {
     opacity: 1;
+  }
+  .mainActionArea {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

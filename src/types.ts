@@ -11,6 +11,6 @@ export interface ContextType {
 export interface SelectedItem {
   selectedItem: string;
   selectedConversation: string | null;
-  updateSelectedItem: (item: string) => void;
+  updateSelectedItem: (item: string | null) => void;
   updateSelectedConversation: (conversationId: string) => void;
 }

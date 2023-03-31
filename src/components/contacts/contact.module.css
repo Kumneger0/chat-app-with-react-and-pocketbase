@@ -96,3 +96,21 @@
 .makeActionDisplayNone:hover {
   cursor: pointer;
 }
+
+.contactName:hover {
+  cursor: pointer;
+}
+@media (width <= 1000px) {
+  .contactWrapper {
+    margin: 5% auto;
+  }
+
+  .eachContact {
+    display: flex;
+    justify-content: space-between;
+  }
+  .contactName {
+    width: 50%;
+    margin-left: -30%;
+  }
+}

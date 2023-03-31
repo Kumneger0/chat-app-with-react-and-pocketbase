@@ -13,12 +13,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 500,
+  width: innerWidth <= 600 ? innerWidth - innerWidth * 0.2 : 500,
   bgcolor: "#424141",
   border: "none",
   boxShadow: 24,
   p: 4,
-  height: 500,
+  height: innerHeight <= 600 ? innerHeight - innerHeight * 0.2 : 500,
 };
 
 export default function BasicModal() {

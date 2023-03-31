@@ -22,8 +22,7 @@ export const useUserStore = create<User>((set) => ({
 export const useSelectedItem = create<SelectedItem>((set) => ({
   selectedItem: "Chats",
   selectedConversation: null,
-  updateSelectedItem: (item: any) =>
-    set((state: any) => ({ selectedItem: item })),
+  updateSelectedItem: (item) => set((state: any) => ({ selectedItem: item })),
   updateSelectedConversation: (conversationId: string) =>
     set((state: any) => ({ selectedConversation: conversationId })),
 }));
@@ -35,6 +34,9 @@ export const authStateContext = createContext<Partial<ContextType>>({
 function App() {
   const user = useUserStore((state: any) => state.user);
   const selectedItem = useSelectedItem((state: any) => state.selectedItem);
+  const selectedConversation = useSelectedItem(
+    (state: any) => state.selectedConversation
+  );
   const updateUser = useUserStore((state: any) => state.updateUser);
   const [authState, setAuthState] = useState<string>("login");
   const updateSelectedConversation = useSelectedItem(
@@ -56,6 +58,7 @@ function App() {
     });
     return () => {
       pb.collection("users").unsubscribe();
+      //@ts-ignore
       updateSelectedConversation(null);
     };
   }, []);
@@ -66,17 +69,38 @@ function App() {
         <>
           {" "}
           <div className={styles.flexWrapper}>
-            <div className={styles.sideBar}>
+            <div
+              style={{
+                display:
+                  selectedConversation && innerWidth <= 1000
+                    ? "none"
+                    : "initial",
+              }}
+              className={styles.sideBar}
+            >
               <SideBar />
             </div>
-            <div className={styles.mainActionArea}>
-              {selectedItem == "Chats" && <Chat />}
-              {selectedItem == "Setting" && <Setting />}
-              {selectedItem == "Contacts" && <Contacts />}
-              {selectedItem == "Bookmarks" && <Bookmarks />}
-              {selectedItem == "Profile" && <Profile />}
+            <div
+              style={{
+                display:
+                  innerWidth <= 1000 && selectedConversation
+                    ? "none"
+                    : "initial",
+              }}
+              className={styles.mainActionArea}
+            >
+              <div>
+                {selectedItem == "Chats" && <Chat />}
+                {selectedItem == "Setting" && <Setting />}
+                {selectedItem == "Contacts" && <Contacts />}
+                {selectedItem == "Bookmarks" && <Bookmarks />}
+                {selectedItem == "Profile" && <Profile />}
+              </div>
             </div>
-            <div className={styles.chatArea}>
+            <div
+              style={{ display: selectedConversation ? "initial" : "none" }}
+              className={styles.chatArea}
+            >
               <Chatarea />
             </div>
           </div>

@@ -86,17 +86,18 @@ export default function Contacts() {
           {contacts?.length >= 1 ? (
             <>
               {contacts.map((contact: any, i: number) => (
-                <div
-                  onClick={() => updateSelectedConversation(contact.id)}
-                  key={i}
-                  className={styles.eachContact}
-                >
+                <div key={i} className={styles.eachContact}>
                   <img
                     className={styles.eachContactIcon}
                     src={`https://avatars.dicebear.com/api/initials/${contact.username}.svg`}
                     alt=""
                   />
-                  <div>{contact.username}</div>
+                  <div
+                    onClick={() => updateSelectedConversation(contact.id)}
+                    className={styles.contactName}
+                  >
+                    {contact.username}
+                  </div>
                   <div
                     ref={contactActionRef.current[i]}
                     className={styles.contactAction}
