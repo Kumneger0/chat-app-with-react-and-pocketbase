@@ -3,6 +3,9 @@ import styles from "./profile.module.css";
 import { useUserStore } from "../../App";
 export default function Profile() {
   const user = useUserStore((state) => state.user);
+  function editBio(e: KeyboardEvent) {
+    console.log(e);
+  }
   return (
     <>
       <div className={styles.profileWrapper}>
@@ -24,7 +27,9 @@ export default function Profile() {
         </div>
         <div className={styles.nameAndInfo}>
           <div>{user.username}</div>
-          <div>bio</div>
+          <div onChange={editBio}>
+            {user.bio || "Edit your bio in settings"}
+          </div>
         </div>
       </div>
     </>

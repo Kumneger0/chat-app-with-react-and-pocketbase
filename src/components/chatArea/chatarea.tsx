@@ -71,7 +71,12 @@ export default function Chatarea() {
     };
   }, []);
 
-  if (!selectedConversation) return <> </>;
+  if (!selectedConversation)
+    return (
+      <div className={styles.displayWhenNoChatSelected}>
+        Wellcome to kune chat
+      </div>
+    );
 
   async function sendMessage() {
     const { value } = msgRef.current;

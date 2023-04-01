@@ -8,10 +8,13 @@ import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useSelectedItem } from "../../App";
+import { useInnerWidth } from "../createContactModal/useInnerWidth";
 export default function SideBar() {
   const updateSelectedItem = useSelectedItem(
     (state: any) => state.updateSelectedItem
   );
+  const SelectedItem = useSelectedItem((state: any) => state.selectedItem);
+  const width = useInnerWidth();
   return (
     <div className={styles.sideBarIconsWrapper}>
       <div className={styles.icons}>
@@ -21,7 +24,15 @@ export default function SideBar() {
           </button>
         </div>
       </div>
-      <div className={`${styles.icons} ${styles.acount}`}>
+      <div
+        style={{
+          background: SelectedItem == "Profile" && "#6b6565",
+          padding: "-10px",
+          width: "80px",
+          maxHeight: width <= 1000 && "50px",
+        }}
+        className={`${styles.icons} ${styles.acount}`}
+      >
         <div>
           <button
             onClick={() => updateSelectedItem("Profile")}
@@ -31,7 +42,15 @@ export default function SideBar() {
           </button>
         </div>
       </div>
-      <div className={`${styles.icons} ${styles.chat}`}>
+      <div
+        style={{
+          background: SelectedItem == "Chats" && "#6b6565",
+          padding: "-10px",
+          width: "80px",
+          maxHeight: width <= 1000 && "50px",
+        }}
+        className={`${styles.icons} ${styles.chat}`}
+      >
         <div>
           {" "}
           <button
@@ -42,7 +61,15 @@ export default function SideBar() {
           </button>
         </div>
       </div>
-      <div className={`${styles.icons} ${styles.contacts}`}>
+      <div
+        style={{
+          background: SelectedItem == "Contacts" && "#6b6565",
+          padding: "-10px",
+          width: "80px",
+          maxHeight: width <= 1000 && "50px",
+        }}
+        className={`${styles.icons} ${styles.contacts}`}
+      >
         <div>
           {" "}
           <button
@@ -53,18 +80,15 @@ export default function SideBar() {
           </button>
         </div>
       </div>
-      <div className={`${styles.icons} ${styles.bookmark}`}>
-        <div>
-          {" "}
-          <button
-            onClick={() => updateSelectedItem("Bookmarks")}
-            className={styles.button}
-          >
-            <BookmarksIcon />
-          </button>
-        </div>
-      </div>
-      <div className={`${styles.icons} ${styles.setting}`}>
+      <div
+        style={{
+          background: SelectedItem == "Setting" && "#6b6565",
+          padding: "-10px",
+          width: "80px",
+          maxHeight: width <= 1000 && "50px",
+        }}
+        className={`${styles.icons} ${styles.setting}`}
+      >
         <div>
           {" "}
           <button

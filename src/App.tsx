@@ -12,6 +12,9 @@ import Auth from "./components/authentication/authWrapper/auth";
 import Chatarea from "./components/chatArea/chatarea";
 import { User, ContextType, SelectedItem } from "./types";
 import { useOnlineStatus } from "./onlineStaus";
+import { useInnerWidth } from "./components/createContactModal/useInnerWidth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const pb = new pocketbase("http://127.0.0.1:8090");
 
@@ -34,7 +37,7 @@ export const authStateContext = createContext<Partial<ContextType>>({
 
 function App() {
   const isOnline = useOnlineStatus();
-  console.log(isOnline);
+  const width = useInnerWidth();
   const user = useUserStore((state: any) => state.user);
   const selectedItem = useSelectedItem((state: any) => state.selectedItem);
   const selectedConversation = useSelectedItem(
@@ -75,9 +78,7 @@ function App() {
             <div
               style={{
                 display:
-                  selectedConversation && innerWidth <= 1000
-                    ? "none"
-                    : "initial",
+                  selectedConversation && width <= 1000 ? "none" : "initial",
               }}
               className={styles.sideBar}
             >
@@ -86,9 +87,7 @@ function App() {
             <div
               style={{
                 display:
-                  innerWidth <= 1000 && selectedConversation
-                    ? "none"
-                    : "initial",
+                  width <= 1000 && selectedConversation ? "none" : "initial",
               }}
               className={styles.mainActionArea}
             >
@@ -101,15 +100,15 @@ function App() {
               </div>
             </div>
             <div
-              style={{ display: selectedConversation ? "initial" : "none" }}
+              style={{
+                display: !selectedConversation && width <= 1000 && "none",
+              }}
               className={styles.chatArea}
             >
               <Chatarea />
             </div>
+            <ToastContainer />
           </div>
-          {/* <div className={styles.bottom}>
-            <div className={styles.bottomArea}>bottomArea</div>
-          </div>{" "} */}
         </>
       ) : (
         <div className={styles.authWrapper}>

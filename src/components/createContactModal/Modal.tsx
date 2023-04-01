@@ -9,6 +9,7 @@ import Textarea from "@mui/joy/Textarea";
 import { pb } from "../../App";
 import { useUserStore } from "../../App";
 import { useInnerWidth } from "./useInnerWidth";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute" as "absolute",
@@ -43,19 +44,71 @@ export default function BasicModal() {
         (record: any) => record.username == userRef.current.value
       );
       if (!findRequiredContact) {
-        alert("no contact found");
+        toast("No contact found!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
+        return;
+      }
+      if (findRequiredContact.id == user.id) {
+        toast("you can't add your self as contact!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
         return;
       }
       if (user.contacts.includes(findRequiredContact.id)) {
-        alert("Contact available already in your contact list");
+        toast("user alread in your contact list!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          type: "error",
+        });
         return;
       }
       await pb.collection("users").update(user.id, {
         contacts: [...user.contacts, findRequiredContact.id],
       });
-      alert("contact added");
+      toast("Contact seccessfully added!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        type: "success",
+      });
     } catch (err) {
-      alert("the was an error ");
+      toast("there was an error!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   }
 

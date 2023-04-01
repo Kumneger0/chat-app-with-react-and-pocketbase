@@ -34,8 +34,8 @@ export default function Setting() {
           />
         </div>
         <div className={styles.nameAndInfo}>
-          <div>kumneger wondimu</div>
-          <div>Web developer</div>
+          <div>{user.name}</div>
+          <div contentEditable>{user.bio || "Edit your bio"}</div>
         </div>
       </div>
     </>

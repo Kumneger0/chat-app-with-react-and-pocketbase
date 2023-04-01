@@ -25,6 +25,39 @@
   cursor: pointer;
 }
 
+.acount:hover::after {
+  content: "Profile";
+  position: fixed;
+  left: 60px;
+  padding: 10px;
+  background-color: #6c6767;
+  border-radius: 10px;
+}
+.chat:hover::after {
+  content: "chats";
+  position: fixed;
+  left: 60px;
+  padding: 10px;
+  background-color: #6c6767;
+  border-radius: 10px;
+}
+.contacts:hover::after {
+  content: "contacts";
+  position: fixed;
+  left: 60px;
+  padding: 10px;
+  background-color: #6c6767;
+  border-radius: 10px;
+}
+.setting:hover::after {
+  content: "Setting";
+  position: fixed;
+  left: 60px;
+  padding: 10px;
+  background-color: #6c6767;
+  border-radius: 10px;
+}
+
 @media (width <= 1000px) {
   .sideBarIconsWrapper {
     flex-direction: row;

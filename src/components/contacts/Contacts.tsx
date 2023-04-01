@@ -14,7 +14,6 @@ export default function Contacts() {
   const updateSelectedConversation = useSelectedItem(
     (state: any) => state.updateSelectedConversation
   );
-  const searchRef = useRef();
   const contactActionRef = useRef<any[]>([]);
 
   const [contacts, setContacts] = useState<any[] | any>([]);
@@ -73,14 +72,7 @@ export default function Contacts() {
           </div>
         </div>
         <div className={styles.searchField}>
-          <input
-            /* @ts-ignore */
-            ref={searchRef}
-            placeholder="Search contact"
-            type="text"
-            name=""
-            id="user"
-          />
+          <SearchContct placeholder="Search contact" />
         </div>
         <div className={styles.contactList}>
           {contacts?.length >= 1 ? (
@@ -155,6 +147,23 @@ export default function Contacts() {
           )}
         </div>
       </div>
+    </>
+  );
+}
+
+export function SearchContct({ placeholder }: { placeholder: string }) {
+  const searchRef = useRef<string>();
+
+  return (
+    <>
+      <input
+        /* @ts-ignore */
+        ref={searchRef}
+        placeholder={placeholder}
+        type="text"
+        name=""
+        id="user"
+      />
     </>
   );
 }
