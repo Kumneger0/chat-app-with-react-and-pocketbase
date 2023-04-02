@@ -19,16 +19,24 @@ export default function Chat() {
       return allUsers.filter((user) => chatsId.includes(user.id));
     }
     const getChatsFromPb = async () => {
-      const { conversations } = await pb.collection("users").getOne(user.id, {
-        $autoCancel: false,
+      const record = await pb
+        .collection("messages")
+        .getFullList({ expand: "user1, user2" });
+      if (!record.length) return;
+      const filtered = record.filter(
+        ({ user1, user2 }) => user1 == user.id || user2 == user.id
+      );
+      const chatPeopleId: string[] = [];
+      filtered.forEach(({ user1, user2 }) => {
+        if (user1 !== user.id) {
+          chatPeopleId.push(user1);
+          return;
+        }
+        chatPeopleId.push(user2);
       });
-      if (conversations) {
-        const chatsId = conversations.map(
-          ({ userId }: { userId: String }) => userId !== user.id && userId
-        );
-        const users = await getContactName(chatsId);
-        setChats(users);
-      }
+      const contactNames = await getContactName(chatPeopleId);
+      if (!contactNames) return;
+      setChats(contactNames);
     };
     getChatsFromPb();
   }, []);

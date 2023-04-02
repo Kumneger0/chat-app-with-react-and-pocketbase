@@ -6,27 +6,19 @@ import { pb } from "../../App";
 import { useUserStore } from "../../App";
 import { Record, UnsubscribeFunc } from "pocketbase";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { endOfDay, formatISO } from "date-fns";
 
-async function getConversationFromPb(userid: string, conversationId: string) {
-  const user = await pb.collection("users").getOne(userid, {
-    $autoCancel: false,
-  });
-  const conversation: any = user.conversations.find(
-    (conversation: any) => conversation.userId == conversationId
-  );
-  return conversation;
-}
-
-async function getContactDetailFromPb(contactId: string) {
-  let detail;
-  try {
-    detail = await pb.collection("users").getOne(contactId, {
-      $autoCancel: false,
-    });
-  } catch (err) {
-    throw new Error("an error occured");
-  }
-  if (detail) return detail;
+async function getConversationFromPb(userId: string, myId: string) {
+  const record = await pb
+    .collection("messages")
+    .getFullList({ expand: "user1,user2" });
+  console.log(userId);
+  const requiredCoversation = record
+    .filter((record: Record) => record.user1 == myId || record.user2 == myId)
+    .filter((record) => record.user1 == userId || record.user2 == userId);
+  console.log("reqird convesation", requiredCoversation);
+  if (requiredCoversation.length) return requiredCoversation[0];
+  return null;
 }
 
 export default function Chatarea() {
@@ -37,41 +29,42 @@ export default function Chatarea() {
     (state) => state.updateSelectedConversation
   );
   const user = useUserStore((state) => state.user);
-  const [conversation, setConversation] = useState<any[]>();
+  const [conversation, setConversation] = useState<any>();
   const [contactDetail, setContactDetail] = useState<any>(null);
+  const [update, setUpdate] = useState<boolean>(false);
   const [conversationError, setConversationError] = useState<null | string>();
   const msgRef = useRef<any>();
+
+  async function getContactDetail(contactId: string) {
+    if (!contactId) return;
+    const contactDetail = await pb.collection("users").getOne(contactId);
+    if (contactDetail) return contactDetail;
+    return null;
+  }
+
   useEffect(() => {
+    setConversation([]);
     getDetail();
     async function getDetail() {
       if (selectedConversation) {
-        const detail = await getContactDetailFromPb(selectedConversation);
-        if (detail) {
-          setContactDetail(detail);
-          console.log(detail);
+        const contactDetail = await getContactDetail(selectedConversation);
+        if (contactDetail) {
+          setContactDetail(contactDetail);
         }
-        const res = await getConversationFromPb(user.id, selectedConversation);
-        if (res && res.userId == selectedConversation) {
-          setConversation(res.conversation);
+        const record = await getConversationFromPb(
+          selectedConversation,
+          user.id
+        );
+        if (!record) {
+          setConversation([]);
           return;
-        } else {
-          setConversationError("There was an error");
         }
-        setConversation([]);
+        setConversation(record);
       }
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, update]);
 
-  let unsubscribe: Promise<UnsubscribeFunc>;
-
-  useEffect(() => {
-    return () => {
-      pb.collection("users").unsubscribe();
-      upDateSelectedConversation("");
-    };
-  }, []);
-
-  if (!selectedConversation)
+  if (!contactDetail)
     return (
       <div className={styles.displayWhenNoChatSelected}>
         Wellcome to kune chat
@@ -81,201 +74,134 @@ export default function Chatarea() {
   async function sendMessage() {
     const { value } = msgRef.current;
     if (!value) return;
-    try {
-      const { conversations } = await pb.collection("users").getOne(user.id);
-      const { conversations: contactConversation } = await pb
-        .collection("users")
-        .getOne(selectedConversation);
-      if (!conversations) {
-        await pb.collection("users").update(user.id, {
-          conversations: [
-            {
-              userId: selectedConversation,
-              conversation: [
-                {
-                  from: user.id,
-                  to: selectedConversation,
-                  date: Date.now(),
-                  text: value,
-                },
-              ],
-            },
-          ],
-        });
-      }
-      if (!contactConversation) {
-        await pb.collection("users").update(selectedConversation, {
-          conversations: [
-            {
-              userId: user.id,
-              conversation: [
-                {
-                  from: user.id,
-                  to: selectedConversation,
-                  date: Date.now(),
-                  text: value,
-                },
-              ],
-            },
-          ],
-        });
-      }
-      if (conversations) {
-        const findconversationWithMe = conversations.find(
-          (conversation: any) => conversation.userId == selectedConversation
-        );
-        conversations.push({
-          userId: selectedConversation,
-          conversation: [
-            {
-              from: user.id,
-              to: selectedConversation,
-              date: Date.now(),
-              text: value,
-            },
-          ],
-        });
-        if (!findconversationWithMe) {
-          await pb.collection("users").update(user.id, {
-            conversations,
-          });
-        }
-        if (findconversationWithMe) {
-          findconversationWithMe.conversation.push({
-            from: user.id,
-            to: selectedConversation,
-            date: Date.now(),
-            text: value,
-          });
-          const filterMine = conversations.filter(
-            (conversation: any) => conversation.userId !== selectedConversation
-          );
-          filterMine.push(findconversationWithMe);
-          await pb.collection("users").update(user.id, {
-            conversations: filterMine,
-          });
-        }
-      }
-      if (contactConversation) {
-        const findconversationWithMe = contactConversation.find(
-          (conversation: any) => conversation.userId == user.id
-        );
-        if (!findconversationWithMe) {
-          await pb.collection("users").update(selectedConversation, {
-            conversations: conversations.push({
-              userId: user.id,
-              conversation: [
-                {
-                  from: user.id,
-                  to: selectedConversation,
-                  date: Date.now(),
-                  text: value,
-                },
-              ],
-            }),
-          });
-        }
-        if (findconversationWithMe) {
-          findconversationWithMe.conversation.push({
-            from: user.id,
-            to: selectedConversation,
-            date: Date.now(),
-            text: value,
-          });
-          const filterMine = conversations.filter(
-            (conversation: any) => conversation.userId !== user.id
-          );
-          filterMine.push(findconversationWithMe);
-          await pb.collection("users").update(selectedConversation, {
-            conversations: filterMine,
-          });
-        }
-      }
-    } catch (err) {
-      alert("err occured");
+    if (contactDetail.id != selectedConversation) return;
+    const message = {
+      from: user.id,
+      to: selectedConversation,
+      text: value,
+      date: Date.now(),
+    };
+    if (!conversation?.id) {
+      const record = await pb.collection("messages").create({
+        user1: user.id,
+        user2: selectedConversation,
+        conversations: [message],
+      });
+      msgRef.current.value = null;
     }
-    msgRef.current.value = null;
+    if (conversation?.id) {
+      const { conversations } = await pb
+        .collection("messages")
+        .getOne(conversation.id);
+      console.log(conversations);
+      if (conversations?.length) {
+        conversations.push(message);
+        console.log("here");
+        const record = await pb.collection("messages").update(conversation.id, {
+          conversations,
+        });
+        msgRef.current.value = null;
+      }
+      if (!conversations?.length) {
+        await pb.collection("messages").update(conversation.id, {
+          conversations: [message],
+        });
+        msgRef.current.value = null;
+      }
+    }
   }
 
-  pb.collection("users").subscribe(user.id, async (record) => {
-    const responce = await getConversationFromPb(user.id, selectedConversation);
-    setConversation(responce?.conversation);
+  pb.collection("messages").subscribe("*", (record) => {
+    if (record.record.user1 == user.id || record.record.user2 == user.id) {
+      setUpdate(!update);
+    }
   });
-
-  if (contactDetail?.id !== selectedConversation) return <></>;
 
   function removeSelectedConversation() {
     //@ts-ignore
     upDateSelectedConversation(null);
   }
 
-  return (
-    <>
-      <div>
-        <div className={styles.head}>
-          <div className={styles.userImageAndName}>
-            <div
-              onClick={removeSelectedConversation}
-              className={styles.backBtn}
-            >
-              <KeyboardBackspaceIcon />
+  function getDate(ms: number) {
+    const time = new Date(ms);
+    return time.toLocaleTimeString();
+  }
+
+  if (contactDetail.id == selectedConversation)
+    return (
+      <>
+        <div>
+          <div className={styles.head}>
+            <div className={styles.userImageAndName}>
+              <div
+                onClick={removeSelectedConversation}
+                className={styles.backBtn}
+              >
+                <KeyboardBackspaceIcon />
+              </div>
+              <img
+                className={styles.userImage}
+                src={`https://avatars.dicebear.com/api/initials/${contactDetail?.username}.svg`}
+                alt=""
+              />
+              <div>{contactDetail && contactDetail.username}</div>
+              <span className={styles.onlineStatus}>away</span>
             </div>
-            <img
-              className={styles.userImage}
-              src={`https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`}
-              alt=""
-            />
-            <div>{contactDetail && contactDetail.username}</div>
-            <span className={styles.onlineStatus}>away</span>
           </div>
         </div>
-      </div>
-      <div className={styles.conversation}>
-        {conversation?.length && contactDetail?.id == selectedConversation ? (
-          conversation.map((conversation: any) => {
-            return (
-              <>
-                <div
-                  className={`${styles.messageInfo} ${
-                    conversation.from == user.id ? styles.you : styles.initials
-                  }`}
-                >
-                  <div className={styles.picAndText}>
-                    <div className={styles.pic}>
-                      <img
-                        className={styles.sender}
-                        src={
-                          conversation.from == selectedConversation
-                            ? `https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`
-                            : `https://avatars.dicebear.com/api/initials/${user.username}.svg`
-                        }
-                        alt=""
-                      />
+        <div className={styles.conversation}>
+          {conversation?.conversations?.length &&
+          contactDetail?.id == selectedConversation ? (
+            conversation.conversations.map((conversation: any) => {
+              return (
+                <>
+                  <div
+                    className={`${styles.messageInfo} ${
+                      conversation.from == user.id
+                        ? styles.you
+                        : styles.initials
+                    }`}
+                  >
+                    <div className={styles.picAndText}>
+                      <div className={styles.pic}>
+                        <img
+                          className={styles.sender}
+                          src={
+                            conversation.from == selectedConversation
+                              ? `https://avatars.dicebear.com/api/initials/${contactDetail.username}.svg`
+                              : `https://avatars.dicebear.com/api/initials/${user.username}.svg`
+                          }
+                          alt=""
+                        />
+                      </div>
+                      <div className={styles.mesgText}>{conversation.text}</div>
                     </div>
-                    <div className={styles.mesgText}>{conversation.text}</div>
+                    <div className={styles.dateInfo}>
+                      <span>
+                        {conversation.from == selectedConversation
+                          ? contactDetail.username
+                          : "you"}
+                      </span>
+                      <span> {getDate(conversation.date)}</span>
+                    </div>
                   </div>
-                  <div className={styles.dateInfo}>
-                    <span>
-                      {conversation.from == selectedConversation
-                        ? contactDetail.username
-                        : "you"}
-                    </span>
-                    <span> {conversation.date}</span>
-                  </div>
-                </div>
-              </>
-            );
-          })
-        ) : (
-          <div>{conversationError && conversationError}</div>
-        )}
-      </div>
-      <div className={styles.messageInput}>
-        <input ref={msgRef} placeholder="Type your message here" type="text" />
-        <div onClick={sendMessage} className={styles.sendIcon}>
-          <SendIcon />{" "}
+                </>
+              );
+            })
+          ) : (
+            <div>{conversationError && conversationError}</div>
+          )}
         </div>
-      </div>
-    </>
-  );
+        <div className={styles.messageInput}>
+          <input
+            ref={msgRef}
+            placeholder="Type your message here"
+            type="text"
+          />
+          <div onClick={sendMessage} className={styles.sendIcon}>
+            <SendIcon />{" "}
+          </div>
+        </div>
+      </>
+    );
 }
