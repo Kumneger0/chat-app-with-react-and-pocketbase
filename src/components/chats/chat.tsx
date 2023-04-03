@@ -4,6 +4,8 @@ import BasicModal from "../createContactModal/Modal";
 import { pb, useUserStore, useSelectedItem } from "../../App";
 import { SearchContct } from "../contacts/Contacts";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import { getConversationFromPb } from "../chatArea/chatarea";
+import DeleteContactModal from "../modal/deleteChatModal";
 
 export default function Chat() {
   const user = useUserStore((state) => state.user);
@@ -41,6 +43,14 @@ export default function Chat() {
     getChatsFromPb();
   }, []);
 
+  async function deleteChat(userId: string) {
+    const requiredCoversation = await getConversationFromPb(userId, user.id);
+    if (!requiredCoversation) return;
+    const deleteConversation = await pb
+      .collection("messages")
+      .delete(requiredCoversation.id);
+  }
+
   return (
     <>
       <div className={styles.chatHeadWrapper}>
@@ -68,7 +78,10 @@ export default function Chat() {
                 >
                   {user.username}
                 </div>
-                <div className={styles.deleteChat}>
+                <div
+                  onClick={() => deleteChat(user.id)}
+                  className={styles.deleteChat}
+                >
                   <DeleteSweepIcon />
                 </div>
               </div>

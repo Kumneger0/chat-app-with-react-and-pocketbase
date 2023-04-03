@@ -6,9 +6,9 @@ import { pb } from "../../App";
 import { useUserStore } from "../../App";
 import { Record, UnsubscribeFunc } from "pocketbase";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { endOfDay, formatISO } from "date-fns";
+import { formatDistance } from "date-fns";
 
-async function getConversationFromPb(userId: string, myId: string) {
+export async function getConversationFromPb(userId: string, myId: string) {
   const record = await pb
     .collection("messages")
     .getFullList({ expand: "user1,user2" });
@@ -123,8 +123,10 @@ export default function Chatarea() {
   }
 
   function getDate(ms: number) {
-    const time = new Date(ms);
-    return time.toLocaleTimeString();
+    const oldDate = new Date(ms);
+    const currentDate = new Date();
+    const distance = formatDistance(oldDate, currentDate, { addSuffix: true });
+    return distance;
   }
 
   if (contactDetail.id == selectedConversation)

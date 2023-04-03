@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./setting.module.css";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { pb, useUserStore } from "../../App";
+import EditIcon from "@mui/icons-material/Edit";
+import { SearchContct } from "../contacts/Contacts";
 export default function Setting() {
   const user = useUserStore((state) => state.user);
-
+  const [shouldEditBio, setThouldEditBio] = useState<boolean>(false);
   function displayLogout() {
     pb.authStore.clear();
+  }
+
+  async function updateBio(bio: string) {
+    if (!bio) return;
+    const responce = await pb.collection("users").update(user.id, {
+      bio,
+    });
+    setThouldEditBio(!shouldEditBio);
   }
 
   return (
@@ -34,8 +44,23 @@ export default function Setting() {
           />
         </div>
         <div className={styles.nameAndInfo}>
-          <div>{user.name}</div>
-          <div contentEditable>{user.bio || "Edit your bio"}</div>
+          <div>{user.username}</div>
+          <div className={styles.editBio}>
+            <div className={styles.userBio}>
+              {!shouldEditBio ? (
+                user.bio || "Edit your bio"
+              ) : (
+                <SearchContct
+                  placeholder="new bio and Press Enter"
+                  oldBio={user.bio}
+                  updateBio={updateBio}
+                />
+              )}
+            </div>
+            <button onClick={() => setThouldEditBio(!shouldEditBio)}>
+              <EditIcon />
+            </button>
+          </div>
         </div>
       </div>
     </>

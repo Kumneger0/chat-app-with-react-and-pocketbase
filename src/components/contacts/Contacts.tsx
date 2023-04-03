@@ -151,9 +151,28 @@ export default function Contacts() {
   );
 }
 
-export function SearchContct({ placeholder }: { placeholder: string }) {
+export function SearchContct({
+  placeholder,
+  updateBio,
+  oldBio,
+}: {
+  placeholder: string;
+  updateBio?: (bio: string) => void;
+  oldBio?: string;
+}) {
   const searchRef = useRef<string>();
-
+  function handleChange(e: KeyboardEvent) {
+    const { value } = searchRef.current;
+    if (!value) return;
+    if (e.code == "Enter" && updateBio) {
+      updateBio(value);
+    }
+  }
+  useEffect(() => {
+    if (oldBio && searchRef.current) {
+      searchRef.current.value = oldBio;
+    }
+  }, []);
   return (
     <>
       <input
@@ -163,6 +182,9 @@ export function SearchContct({ placeholder }: { placeholder: string }) {
         type="text"
         name=""
         id="user"
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void =>
+          handleChange(e)
+        }
       />
     </>
   );

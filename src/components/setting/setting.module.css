@@ -49,3 +49,32 @@
 .nameAndInfo div {
   gap: 10px;
 }
+.editBio {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 50px;
+  align-items: center;
+}
+
+.editBio div {
+  width: 80%;
+}
+.editBio button {
+  all: unset;
+}
+.editBio button:hover {
+  cursor: pointer;
+}
+
+.userBio input {
+  border: none;
+  padding: 10px;
+  background-color: #424242;
+  border-radius: 10px;
+}
+
+.userBio input:focus {
+  outline: none;
+}
