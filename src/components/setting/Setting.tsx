@@ -33,7 +33,7 @@ export default function Setting() {
         </div>
         <div className={styles.setting}>
           <h4>Setting</h4>
-          <span onClick={displayLogout}>
+          <span className={styles.logout} onClick={displayLogout}>
             <LogoutIcon />
           </span>
         </div>

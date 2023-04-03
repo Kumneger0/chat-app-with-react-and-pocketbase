@@ -160,8 +160,8 @@ export function SearchContct({
   updateBio?: (bio: string) => void;
   oldBio?: string;
 }) {
-  const searchRef = useRef<string>();
-  function handleChange(e: KeyboardEvent) {
+  const searchRef = useRef<any>();
+  function handleChange(e: React.KeyboardEvent) {
     const { value } = searchRef.current;
     if (!value) return;
     if (e.code == "Enter" && updateBio) {
@@ -176,7 +176,6 @@ export function SearchContct({
   return (
     <>
       <input
-        /* @ts-ignore */
         ref={searchRef}
         placeholder={placeholder}
         type="text"

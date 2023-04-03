@@ -82,3 +82,16 @@
     align-items: center;
   }
 }
+
+@media (width <= 800px) {
+  .authWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .authSection {
+    width: 90%;
+    height: 90vh;
+    max-height: 600px;
+  }
+}

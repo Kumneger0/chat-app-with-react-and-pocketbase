@@ -67,4 +67,20 @@
   .icons {
     height: 20rem;
   }
+  .acount:hover::after {
+    content: "";
+    visibility: hidden;
+  }
+  .chat:hover::after {
+    content: "";
+    visibility: hidden;
+  }
+  .contacts:hover::after {
+    content: "";
+    visibility: hidden;
+  }
+  .setting:hover::after {
+    content: "";
+    visibility: hidden;
+  }
 }

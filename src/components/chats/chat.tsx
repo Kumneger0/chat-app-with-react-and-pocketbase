@@ -23,7 +23,7 @@ export default function Chat() {
     const getChatsFromPb = async () => {
       const record = await pb
         .collection("messages")
-        .getFullList({ expand: "user1, user2" });
+        .getFullList({ expand: "user1, user2", $autoCancel: false });
       if (!record.length) return;
       const filtered = record.filter(
         ({ user1, user2 }) => user1 == user.id || user2 == user.id

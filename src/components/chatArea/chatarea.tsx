@@ -154,10 +154,11 @@ export default function Chatarea() {
         <div className={styles.conversation}>
           {conversation?.conversations?.length &&
           contactDetail?.id == selectedConversation ? (
-            conversation.conversations.map((conversation: any) => {
+            conversation.conversations.map((conversation: any, id: number) => {
               return (
                 <>
                   <div
+                    key={id}
                     className={`${styles.messageInfo} ${
                       conversation.from == user.id
                         ? styles.you
