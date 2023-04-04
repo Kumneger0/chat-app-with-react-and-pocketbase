@@ -26,8 +26,8 @@ export const useUserStore = create<User>((set) => ({
 export const useSelectedItem = create<SelectedItem>((set) => ({
   selectedItem: "Chats",
   selectedConversation: null,
-  updateSelectedItem: (item) => set((state: any) => ({ selectedItem: item })),
-  updateSelectedConversation: (conversationId: string) =>
+  updateSelectedItem: (item) => set(() => ({ selectedItem: item })),
+  updateSelectedConversation: (conversationId) =>
     set((state: any) => ({ selectedConversation: conversationId })),
 }));
 
@@ -101,7 +101,8 @@ function App() {
             </div>
             <div
               style={{
-                display: !selectedConversation && width <= 1000 && "none",
+                display:
+                  !selectedConversation && width <= 1000 ? "none" : "initial",
               }}
               className={styles.chatArea}
             >

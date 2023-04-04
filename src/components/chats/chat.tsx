@@ -88,7 +88,16 @@ export default function Chat() {
             ))}
           </div>
         ) : (
-          <></>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              margin: "20px auto",
+            }}
+          >
+            <div>No chats available</div>
+          </div>
         )}
       </div>
     </>

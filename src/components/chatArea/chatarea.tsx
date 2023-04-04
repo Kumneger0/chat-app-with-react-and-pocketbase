@@ -7,21 +7,20 @@ import { useUserStore } from "../../App";
 import { Record, UnsubscribeFunc } from "pocketbase";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { formatDistance } from "date-fns";
+import { flushSync } from "react-dom";
 
 export async function getConversationFromPb(userId: string, myId: string) {
   const record = await pb
     .collection("messages")
     .getFullList({ expand: "user1,user2" });
-  console.log(userId);
   const requiredCoversation = record
     .filter((record: Record) => record.user1 == myId || record.user2 == myId)
     .filter((record) => record.user1 == userId || record.user2 == userId);
-  console.log("reqird convesation", requiredCoversation);
   if (requiredCoversation.length) return requiredCoversation[0];
   return null;
 }
 
-export default function Chatarea() {
+export default function Chatarea(): JSX.Element {
   const selectedConversation: string = useSelectedItem(
     (state: any) => state.selectedConversation
   );
@@ -33,7 +32,8 @@ export default function Chatarea() {
   const [contactDetail, setContactDetail] = useState<any>(null);
   const [update, setUpdate] = useState<boolean>(false);
   const [conversationError, setConversationError] = useState<null | string>();
-  const msgRef = useRef<any>();
+  const msgRef = useRef<HTMLInputElement>(null);
+  const chatsRef = useRef<HTMLDivElement>(null);
 
   async function getContactDetail(contactId: string) {
     if (!contactId) return;
@@ -59,10 +59,17 @@ export default function Chatarea() {
           setConversation([]);
           return;
         }
-        setConversation(record);
+        flushSync(() => setConversation(record));
+        scrollToLast();
       }
     }
   }, [selectedConversation, update]);
+
+  useEffect(() => {
+    return () => {
+      upDateSelectedConversation(null);
+    };
+  }, []);
 
   if (!contactDetail)
     return (
@@ -72,7 +79,7 @@ export default function Chatarea() {
     );
 
   async function sendMessage() {
-    const { value } = msgRef.current;
+    const value = msgRef.current?.value;
     if (!value) return;
     if (contactDetail.id != selectedConversation) return;
     const message = {
@@ -87,7 +94,7 @@ export default function Chatarea() {
         user2: selectedConversation,
         conversations: [message],
       });
-      msgRef.current.value = null;
+      msgRef.current!.value = "";
     }
     if (conversation?.id) {
       const { conversations } = await pb
@@ -96,19 +103,29 @@ export default function Chatarea() {
       console.log(conversations);
       if (conversations?.length) {
         conversations.push(message);
-        console.log("here");
+        console.log("");
         const record = await pb.collection("messages").update(conversation.id, {
           conversations,
         });
-        msgRef.current.value = null;
+        msgRef.current!.value = "";
       }
       if (!conversations?.length) {
         await pb.collection("messages").update(conversation.id, {
           conversations: [message],
         });
-        msgRef.current.value = null;
+        msgRef.current!.value = "";
       }
     }
+  }
+
+  function scrollToLast() {
+    const lastElement = chatsRef.current?.lastElementChild;
+    if (!lastElement) return;
+    lastElement.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "center",
+    });
   }
 
   pb.collection("messages").subscribe("*", (record) => {
@@ -118,14 +135,16 @@ export default function Chatarea() {
   });
 
   function removeSelectedConversation() {
-    //@ts-ignore
     upDateSelectedConversation(null);
   }
 
   function getDate(ms: number) {
     const oldDate = new Date(ms);
     const currentDate = new Date();
-    const distance = formatDistance(oldDate, currentDate, { addSuffix: true });
+    const distance = formatDistance(oldDate, currentDate, {
+      addSuffix: true,
+      includeSeconds: true,
+    });
     return distance;
   }
 
@@ -151,7 +170,7 @@ export default function Chatarea() {
             </div>
           </div>
         </div>
-        <div className={styles.conversation}>
+        <div ref={chatsRef} className={styles.conversation}>
           {conversation?.conversations?.length &&
           contactDetail?.id == selectedConversation ? (
             conversation.conversations.map((conversation: any, id: number) => {
@@ -200,6 +219,11 @@ export default function Chatarea() {
             ref={msgRef}
             placeholder="Type your message here"
             type="text"
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key == "Enter") {
+                sendMessage();
+              }
+            }}
           />
           <div onClick={sendMessage} className={styles.sendIcon}>
             <SendIcon />{" "}

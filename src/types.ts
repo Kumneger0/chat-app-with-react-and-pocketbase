@@ -9,8 +9,8 @@ export interface ContextType {
 }
 
 export interface SelectedItem {
-  selectedItem: string;
+  selectedItem: string | null;
   selectedConversation: string | null;
   updateSelectedItem: (item: string | null) => void;
-  updateSelectedConversation: (conversationId: string) => void;
+  updateSelectedConversation: (conversationId: string | null) => void;
 }
