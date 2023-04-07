@@ -10,13 +10,14 @@ import Contacts from "./components/contacts/Contacts";
 import Bookmarks from "@mui/icons-material/Bookmarks";
 import Auth from "./components/authentication/authWrapper/auth";
 import Chatarea from "./components/chatArea/chatarea";
-import { User, ContextType, SelectedItem } from "./types";
+import { User, ContextType, SelectedItem, showProfile } from "./types";
 import { useOnlineStatus } from "./onlineStaus";
 import { useInnerWidth } from "./components/createContactModal/useInnerWidth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ContactProfile } from "./components/contactProfile/ContactProfile";
 
-export const pb = new pocketbase("put your pb server url here");
+export const pb = new pocketbase("http://127.0.0.1:8090");
 
 export const useUserStore = create<User>((set) => ({
   user: null,
@@ -45,6 +46,7 @@ function App() {
   );
   const updateUser = useUserStore((state: any) => state.updateUser);
   const [authState, setAuthState] = useState<string>("login");
+  const [showProfile, setShowProfile] = useState<showProfile | boolean>(false);
   const updateSelectedConversation = useSelectedItem(
     (state) => state.updateSelectedConversation
   );
@@ -64,7 +66,6 @@ function App() {
     });
     return () => {
       pb.collection("users").unsubscribe();
-      //@ts-ignore
       updateSelectedConversation(null);
     };
   }, []);
@@ -82,7 +83,7 @@ function App() {
               }}
               className={styles.sideBar}
             >
-              <SideBar />
+              <SideBar setShowProfile={setShowProfile} />
             </div>
             <div
               style={{
@@ -91,13 +92,20 @@ function App() {
               }}
               className={styles.mainActionArea}
             >
-              <div>
-                {selectedItem == "Chats" && <Chat />}
-                {selectedItem == "Setting" && <Setting />}
-                {selectedItem == "Contacts" && <Contacts />}
-                {selectedItem == "Bookmarks" && <Bookmarks />}
-                {selectedItem == "Profile" && <Profile />}
-              </div>
+              {showProfile !== false ? (
+                <ContactProfile
+                  setShowProfile={setShowProfile}
+                  showProfile={showProfile as showProfile}
+                />
+              ) : (
+                <div>
+                  {selectedItem == "Chats" && <Chat />}
+                  {selectedItem == "Setting" && <Setting />}
+                  {selectedItem == "Contacts" && <Contacts />}
+                  {selectedItem == "Bookmarks" && <Bookmarks />}
+                  {selectedItem == "Profile" && <Profile />}
+                </div>
+              )}
             </div>
             <div
               style={{
@@ -106,7 +114,7 @@ function App() {
               }}
               className={styles.chatArea}
             >
-              <Chatarea />
+              <Chatarea setShowProfile={setShowProfile} />
             </div>
             <ToastContainer />
           </div>

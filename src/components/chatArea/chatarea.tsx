@@ -9,6 +9,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { formatDistance } from "date-fns";
 import { flushSync } from "react-dom";
 import { User } from "../contacts/Contacts";
+import { showProfile } from "../../types";
 type ConversationType = Awaited<ReturnType<typeof getConversationFromPb>>;
 
 export async function getConversationFromPb(userId: string, myId: string) {
@@ -22,7 +23,15 @@ export async function getConversationFromPb(userId: string, myId: string) {
   return null;
 }
 
-export default function Chatarea(): JSX.Element {
+type Callback = {
+  cb: (value: any) => boolean;
+};
+
+export default function Chatarea({
+  setShowProfile,
+}: {
+  setShowProfile: (value: showProfile | boolean) => void;
+}): JSX.Element {
   const selectedConversation: string = useSelectedItem(
     (state: any) => state.selectedConversation
   );
@@ -91,6 +100,11 @@ export default function Chatarea(): JSX.Element {
       text: value,
       date: Date.now(),
     };
+    const previosConversation = { ...conversation };
+    if (conversation?.conversations?.length) {
+      previosConversation.conversations.push(message);
+      setConversation(previosConversation);
+    }
     if (!conversation?.id) {
       const record = await pb.collection("messages").create({
         user1: user.id,
@@ -164,6 +178,9 @@ export default function Chatarea(): JSX.Element {
                 <KeyboardBackspaceIcon />
               </div>
               <img
+                onClick={() =>
+                  setShowProfile({ isTrue: true, id: contactDetail.id })
+                }
                 className={styles.userImage}
                 src={`https://avatars.dicebear.com/api/initials/${contactDetail?.username}.svg`}
                 alt=""
@@ -235,5 +252,9 @@ export default function Chatarea(): JSX.Element {
       </>
     );
 
-  return <></>;
+  return (
+    <div className={styles.displayWhenNoChatSelected}>
+      Wellcome to kune chat
+    </div>
+  );
 }
