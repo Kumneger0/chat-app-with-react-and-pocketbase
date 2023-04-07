@@ -13,33 +13,35 @@ export default function Chat() {
     (state) => state.updateSelectedConversation
   );
   const [chats, setChats] = useState<any[]>([]);
+
+  async function getContactName(chatsId: string[]) {
+    const allUsers = await pb
+      .collection("users")
+      .getFullList({ $autoCancel: false });
+    return allUsers.filter((user) => chatsId.includes(user.id));
+  }
+  const getChatsFromPb = async () => {
+    const record = await pb
+      .collection("messages")
+      .getFullList({ expand: "user1, user2", $autoCancel: false });
+    if (!record.length) return;
+    const filtered = record.filter(
+      ({ user1, user2 }) => user1 == user.id || user2 == user.id
+    );
+    const chatPeopleId: string[] = [];
+    filtered.forEach(({ user1, user2 }) => {
+      if (user1 !== user.id) {
+        chatPeopleId.push(user1);
+        return;
+      }
+      chatPeopleId.push(user2);
+    });
+    const contactNames = await getContactName(chatPeopleId);
+    if (!contactNames) return;
+    setChats(contactNames);
+  };
+
   useEffect(() => {
-    async function getContactName(chatsId: string[]) {
-      const allUsers = await pb
-        .collection("users")
-        .getFullList({ $autoCancel: false });
-      return allUsers.filter((user) => chatsId.includes(user.id));
-    }
-    const getChatsFromPb = async () => {
-      const record = await pb
-        .collection("messages")
-        .getFullList({ expand: "user1, user2", $autoCancel: false });
-      if (!record.length) return;
-      const filtered = record.filter(
-        ({ user1, user2 }) => user1 == user.id || user2 == user.id
-      );
-      const chatPeopleId: string[] = [];
-      filtered.forEach(({ user1, user2 }) => {
-        if (user1 !== user.id) {
-          chatPeopleId.push(user1);
-          return;
-        }
-        chatPeopleId.push(user2);
-      });
-      const contactNames = await getContactName(chatPeopleId);
-      if (!contactNames) return;
-      setChats(contactNames);
-    };
     getChatsFromPb();
   }, []);
 
@@ -49,6 +51,8 @@ export default function Chat() {
     const deleteConversation = await pb
       .collection("messages")
       .delete(requiredCoversation.id);
+    getChatsFromPb();
+    updateSelectedConversation(null);
   }
 
   return (

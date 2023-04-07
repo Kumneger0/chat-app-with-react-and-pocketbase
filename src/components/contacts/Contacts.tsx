@@ -8,6 +8,12 @@ import ClearIcon from "@mui/icons-material/Clear";
 import BlockIcon from "@mui/icons-material/Block";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { flushSync } from "react-dom";
+
+export interface User {
+  username: string;
+  id: string;
+}
 
 export default function Contacts() {
   const user = useUserStore((state) => state.user);
@@ -15,8 +21,10 @@ export default function Contacts() {
     (state: any) => state.updateSelectedConversation
   );
   const contactActionRef = useRef<any[]>([]);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  const [contacts, setContacts] = useState<any[] | any>([]);
+  const [contacts, setContacts] = useState<User[]>([]);
+  const [allContacts, setAllContacts] = useState<User[]>([]);
 
   useEffect(() => {
     const getContacts = async () => {
@@ -24,8 +32,13 @@ export default function Contacts() {
         expand: "contacts",
         $autoCancel: false,
       });
-
-      setContacts(record.expand.contacts);
+      const userContacts: User[] = record.expand.contacts.map(
+        ({ username, id }: { username: String; id: String }) => ({
+          username,
+          id,
+        })
+      );
+      setContacts(userContacts);
     };
     getContacts();
   }, []);
@@ -58,8 +71,28 @@ export default function Contacts() {
         expand: "contacts",
       });
       const contactsAfterDeletion = AfterDeletion.expand.contacts;
-      setContacts(contactsAfterDeletion);
+      const userContacts = contactsAfterDeletion.map(
+        ({ username, id }: { username: String; id: String }) => ({
+          username,
+          id,
+        })
+      );
+      setContacts(userContacts);
+      updateSelectedConversation(null);
     } catch (err) {}
+  }
+
+  function searchContact(e: React.ChangeEvent) {
+    if (!allContacts.length) {
+      flushSync(() => setAllContacts(contacts));
+    }
+    if (allContacts) {
+      const name = searchRef.current?.value!;
+      const filterdContacts = allContacts.filter(
+        ({ username }: { username: String }) => username.includes(name)
+      );
+      setContacts(filterdContacts);
+    }
   }
 
   return (
@@ -72,7 +105,16 @@ export default function Contacts() {
           </div>
         </div>
         <div className={styles.searchField}>
-          <SearchContct placeholder="Search contact" />
+          <input
+            ref={searchRef}
+            placeholder="search contacts"
+            type="text"
+            name=""
+            id="user"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+              searchContact(e)
+            }
+          />
         </div>
         <div className={styles.contactList}>
           {contacts?.length >= 1 ? (
@@ -155,10 +197,13 @@ export function SearchContct({
   placeholder,
   updateBio,
   oldBio,
+  searchContact,
 }: {
   placeholder: string;
   updateBio?: (bio: string) => void;
+
   oldBio?: string;
+  searchContact?: (name: string) => void;
 }) {
   const searchRef = useRef<any>();
   function handleChange(e: React.KeyboardEvent) {
@@ -166,6 +211,9 @@ export function SearchContct({
     if (!value) return;
     if (e.code == "Enter" && updateBio) {
       updateBio(value);
+    }
+    if (searchContact) {
+      searchContact(value);
     }
   }
   useEffect(() => {

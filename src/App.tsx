@@ -16,7 +16,7 @@ import { useInnerWidth } from "./components/createContactModal/useInnerWidth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const pb = new pocketbase("http://127.0.0.1:8090");
+export const pb = new pocketbase("put your pb server url here");
 
 export const useUserStore = create<User>((set) => ({
   user: null,

@@ -8,6 +8,8 @@ import { Record, UnsubscribeFunc } from "pocketbase";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { formatDistance } from "date-fns";
 import { flushSync } from "react-dom";
+import { User } from "../contacts/Contacts";
+type ConversationType = Awaited<ReturnType<typeof getConversationFromPb>>;
 
 export async function getConversationFromPb(userId: string, myId: string) {
   const record = await pb
@@ -29,7 +31,7 @@ export default function Chatarea(): JSX.Element {
   );
   const user = useUserStore((state) => state.user);
   const [conversation, setConversation] = useState<any>();
-  const [contactDetail, setContactDetail] = useState<any>(null);
+  const [contactDetail, setContactDetail] = useState<User>();
   const [update, setUpdate] = useState<boolean>(false);
   const [conversationError, setConversationError] = useState<null | string>();
   const msgRef = useRef<HTMLInputElement>(null);
@@ -38,10 +40,10 @@ export default function Chatarea(): JSX.Element {
   async function getContactDetail(contactId: string) {
     if (!contactId) return;
     const contactDetail = await pb.collection("users").getOne(contactId);
-    if (contactDetail) return contactDetail;
+    if (contactDetail)
+      return { username: contactDetail.username, id: contactDetail.id };
     return null;
   }
-
   useEffect(() => {
     setConversation([]);
     getDetail();
@@ -51,7 +53,8 @@ export default function Chatarea(): JSX.Element {
         if (contactDetail) {
           setContactDetail(contactDetail);
         }
-        const record = await getConversationFromPb(
+
+        const record: ConversationType = await getConversationFromPb(
           selectedConversation,
           user.id
         );
@@ -80,7 +83,7 @@ export default function Chatarea(): JSX.Element {
 
   async function sendMessage() {
     const value = msgRef.current?.value;
-    if (!value) return;
+    if (!value || !contactDetail) return;
     if (contactDetail.id != selectedConversation) return;
     const message = {
       from: user.id,
@@ -231,4 +234,6 @@ export default function Chatarea(): JSX.Element {
         </div>
       </>
     );
+
+  return <></>;
 }
