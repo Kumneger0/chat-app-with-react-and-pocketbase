@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import styles from "./login.module.css";
 import { Button } from "@mui/material";
 import { pb } from "../../../App";
@@ -7,18 +7,21 @@ import { authStateContext } from "../../../App";
 
 export default function Login() {
   const { setAuthState } = useContext(authStateContext);
-  const userRef = useRef<any>();
-  const passRef = useRef<any>();
+  const userRef = useRef<HTMLInputElement>(null);
+  const passRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setIsloading] = useState<boolean>(false);
 
   const login = async () => {
-    // @ts-ignore
-    const { value: usernameOrEmail } = userRef.current;
-    const { value: password } = passRef.current;
+    setIsloading(true);
+    const { value: usernameOrEmail } = userRef?.current!;
+    const { value: password } = passRef?.current!;
     if (!usernameOrEmail || !password) return;
     try {
       await pb.collection("users").authWithPassword(usernameOrEmail, password);
     } catch (err) {
-      alert("the was an err ");
+      setError("There was an error while processing you request");
+      setIsloading(false);
     }
   };
 
@@ -27,6 +30,16 @@ export default function Login() {
       <div className={styles.WellcomeMessage}>
         <h2>Wellcome Back</h2>
         <span>sign in to continue</span>
+        <span
+          style={{
+            fontSize: "small",
+            fontStyle: "italic",
+            color: "red",
+            visibility: !error ? "hidden" : "visible",
+          }}
+        >
+          {error}
+        </span>
       </div>
       <div className={styles.userName}>
         <label htmlFor="user">username or email</label>
@@ -59,7 +72,7 @@ export default function Login() {
             width: "15rem",
           }}
         >
-          Log in
+          {loading ? "please wait" : "login"}
         </Button>
       </div>
       <hr style={{ width: "90%", margin: "0 auto" }} />

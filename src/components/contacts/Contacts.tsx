@@ -26,20 +26,22 @@ export default function Contacts() {
   const [contacts, setContacts] = useState<User[]>([]);
   const [allContacts, setAllContacts] = useState<User[]>([]);
 
+  const getContacts = async () => {
+    const record = await pb.collection("users").getOne(user.id, {
+      expand: "contacts",
+      $autoCancel: false,
+    });
+    if (!record.expand.contacts?.length) return;
+    const userContacts: User[] = record.expand.contacts.map(
+      ({ username, id }: { username: String; id: String }) => ({
+        username,
+        id,
+      })
+    );
+    setContacts(userContacts);
+  };
+
   useEffect(() => {
-    const getContacts = async () => {
-      const record = await pb.collection("users").getOne(user.id, {
-        expand: "contacts",
-        $autoCancel: false,
-      });
-      const userContacts: User[] = record.expand.contacts.map(
-        ({ username, id }: { username: String; id: String }) => ({
-          username,
-          id,
-        })
-      );
-      setContacts(userContacts);
-    };
     getContacts();
   }, []);
 
@@ -57,6 +59,10 @@ export default function Contacts() {
         (contactActionRef.current[i] = React.createRef())
     );
   }
+
+  pb.collection("users").subscribe(user.id, (record) => {
+    getContacts();
+  });
 
   async function deleteContact(indx: number) {
     const id: string = contacts[indx].id;
@@ -197,38 +203,43 @@ export function SearchContct({
   placeholder,
   updateBio,
   oldBio,
+  setBio,
   searchContact,
 }: {
   placeholder: string;
   updateBio?: (bio: string) => void;
-
+  setBio?: (bio: string | null) => void;
   oldBio?: string;
   searchContact?: (name: string) => void;
 }) {
-  const searchRef = useRef<any>();
+  const [name, setName] = useState<string>(oldBio ? oldBio : "");
   function handleChange(e: React.KeyboardEvent) {
-    const { value } = searchRef.current;
-    if (!value) return;
+    if (name == "") return;
+    if (setBio) {
+      flushSync(() => setBio(name));
+    }
     if (e.code == "Enter" && updateBio) {
-      updateBio(value);
+      updateBio(name);
     }
     if (searchContact) {
-      searchContact(value);
+      searchContact(name);
     }
   }
   useEffect(() => {
-    if (oldBio && searchRef.current) {
-      searchRef.current.value = oldBio;
+    if (setBio) {
+      setBio(name);
     }
-  }, []);
+  }, [name]);
+
   return (
     <>
       <input
-        ref={searchRef}
+        value={name}
         placeholder={placeholder}
         type="text"
         name=""
         id="user"
+        onChange={(e) => flushSync(() => setName(e.target.value))}
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void =>
           handleChange(e)
         }

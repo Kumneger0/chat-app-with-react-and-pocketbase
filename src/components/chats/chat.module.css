@@ -72,6 +72,10 @@
   border-radius: 10px;
 }
 
+.chatName:hover {
+  cursor: pointer;
+}
+
 @media (width <= 1000px) {
   .chatHeadWrapper {
     margin: 5% auto;

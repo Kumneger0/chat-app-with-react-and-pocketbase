@@ -45,7 +45,7 @@ export const ContactProfile = ({
             alt=""
           />
         </div>
-        <h4>My Profile</h4>
+        <h4>{`${contact?.username}'s profile`}</h4>
         <div className={styles.profilePic}>
           <img
             src={`https://avatars.dicebear.com/api/initials/${contact?.username}.svg`}

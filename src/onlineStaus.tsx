@@ -5,6 +5,7 @@ export function useOnlineStatus() {
     subscribe,
     () => window.navigator.onLine
   );
+  console.log(isOnline);
   return isOnline;
 }
 

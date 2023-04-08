@@ -30,18 +30,18 @@ export default function BasicModal() {
     Number(width) <= 600 ? Number(width) - Number(width) * 0.2 : 500;
   style.width = modalWidth;
   const user = useUserStore((state: any) => state.user);
-  const userRef = React.useRef<any>();
-  const passRef = React.useRef<any>();
+  const userRef = React.useRef<HTMLInputElement>(null);
+  const nameRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   async function addContact() {
-    if (!userRef.current.value) return;
+    if (!userRef?.current?.value) return;
     try {
       const fullList = await pb.collection("users").getFullList();
       const findRequiredContact = fullList.find(
-        (record: any) => record.username == userRef.current.value
+        (record: any) => record.username == userRef?.current?.value
       );
       if (!findRequiredContact) {
         toast("No contact found!", {
@@ -99,6 +99,7 @@ export default function BasicModal() {
         theme: "dark",
         type: "success",
       });
+      setOpen((prv) => !prv);
     } catch (err) {
       toast("there was an error!", {
         position: "top-right",
@@ -129,9 +130,13 @@ export default function BasicModal() {
             component="h2"
           >
             <div className={styles.email}>
-              <label htmlFor="user">Username</label>
+              <label
+                style={{ fontSize: "small", fontStyle: "italic" }}
+                htmlFor="user"
+              >
+                Username
+              </label>
               <input
-                /* @ts-ignore */
                 ref={userRef}
                 placeholder="username"
                 type="text"
@@ -140,10 +145,14 @@ export default function BasicModal() {
               />
             </div>
             <div className={styles.name}>
-              <label htmlFor="pass">name(optional)</label>
+              <label
+                style={{ fontSize: "small", fontStyle: "italic" }}
+                htmlFor="pass"
+              >
+                name(optional)
+              </label>
               <input
-                /* @ts-ignore */
-                ref={passRef}
+                ref={nameRef}
                 placeholder="Name"
                 type="text"
                 name=""
@@ -151,7 +160,9 @@ export default function BasicModal() {
               />
             </div>
             <div className={styles.Textarea}>
-              <div>Invitation message(optional)</div>
+              <div style={{ fontSize: "small", fontStyle: "italic" }}>
+                Invitation message(optional)
+              </div>
               <Textarea
                 size="lg"
                 name="Size"

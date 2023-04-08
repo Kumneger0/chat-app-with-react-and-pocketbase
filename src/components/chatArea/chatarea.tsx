@@ -146,6 +146,7 @@ export default function Chatarea({
   }
 
   pb.collection("messages").subscribe("*", (record) => {
+    console.log(record);
     if (record.record.user1 == user.id || record.record.user2 == user.id) {
       setUpdate(!update);
     }
@@ -168,7 +169,7 @@ export default function Chatarea({
   if (contactDetail.id == selectedConversation)
     return (
       <>
-        <div>
+        <div className={styles.contactInformation}>
           <div className={styles.head}>
             <div className={styles.userImageAndName}>
               <div
@@ -185,8 +186,10 @@ export default function Chatarea({
                 src={`https://avatars.dicebear.com/api/initials/${contactDetail?.username}.svg`}
                 alt=""
               />
-              <div>{contactDetail && contactDetail.username}</div>
-              <span className={styles.onlineStatus}>away</span>
+              <div className={styles.nameAndOnlineStatus}>
+                <span>{contactDetail && contactDetail.username}</span>
+                <span className={styles.onlineStatus}>away</span>
+              </div>
             </div>
           </div>
         </div>
