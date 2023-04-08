@@ -17,7 +17,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContactProfile } from "./components/contactProfile/ContactProfile";
 
-export const pb = new pocketbase("your pocketbase server url");
+export const pb = new pocketbase("pocketbase server url");
 
 export const useUserStore = create<User>((set) => ({
   user: null,
