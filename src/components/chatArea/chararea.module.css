@@ -1,8 +1,10 @@
 .head {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgb(40, 38, 38);
   position: fixed;
   width: calc(100vw - 25rem);
   right: 0;
+  opacity: 1;
+  z-index: 100;
 }
 
 .userImageAndName {
@@ -22,13 +24,8 @@
 }
 
 .onlineStatus {
-  position: absolute;
-  left: 8%;
-  top: 5%;
-  margin-top: 1.2rem;
   font-size: small;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-style: italic;
 }
 
 .conversation {
@@ -54,10 +51,13 @@
   padding: 15px;
   background-color: rgba(255, 255, 255, 0.15);
   margin: 10px;
+  border-radius: 10px;
 }
 
 .dateInfo {
   display: block;
+  font-style: italic;
+  font-size: small;
 }
 
 .picAndText {
@@ -123,8 +123,14 @@
 }
 
 @media (width <= 1000px) {
+  .userImageAndName {
+    margin: 0;
+  }
   .head {
     width: 100%;
+  }
+  .conversation {
+    margin: 20% auto;
   }
 }
 
@@ -136,12 +142,17 @@
     display: initial;
     margin: 10px;
   }
-  .onlineStatus {
-    position: absolute;
-    left: 15%;
-  }
 }
 
+.contactInformation {
+  width: 100%;
+  background-color: #1a1717;
+}
+
+.nameAndOnlineStatus {
+  display: flex;
+  flex-direction: column;
+}
 @media (width <= 600px) {
   .messageInput {
     justify-content: center;
@@ -152,8 +163,9 @@
   .messageInput input {
     width: 80%;
   }
-  .onlineStatus {
-    position: absolute;
-    left: 25%;
+  .mesgText {
+    font-size: small;
+    width: auto;
+    height: auto;
   }
 }

@@ -9,7 +9,11 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useSelectedItem } from "../../App";
 import { useInnerWidth } from "../createContactModal/useInnerWidth";
-export default function SideBar() {
+export default function SideBar({
+  setShowProfile,
+}: {
+  setShowProfile: (value: boolean) => void;
+}) {
   const updateSelectedItem = useSelectedItem(
     (state: any) => state.updateSelectedItem
   );
@@ -26,16 +30,21 @@ export default function SideBar() {
       </div>
       <div
         style={{
+          //@ts-ignore
           background: SelectedItem == "Profile" && "#6b6565",
           padding: "-10px",
           width: "80px",
-          maxHeight: width <= 1000 && "50px",
+          //@ts-ignore
+          maxHeight: width <= 1000 && 50,
         }}
         className={`${styles.icons} ${styles.acount}`}
       >
         <div>
           <button
-            onClick={() => updateSelectedItem("Profile")}
+            onClick={() => {
+              updateSelectedItem("Profile");
+              setShowProfile(false);
+            }}
             className={styles.button}
           >
             <AccountCircleOutlinedIcon />
@@ -44,9 +53,11 @@ export default function SideBar() {
       </div>
       <div
         style={{
+          //@ts-ignore
           background: SelectedItem == "Chats" && "#6b6565",
           padding: "-10px",
           width: "80px",
+          //@ts-ignore
           maxHeight: width <= 1000 && "50px",
         }}
         className={`${styles.icons} ${styles.chat}`}
@@ -54,7 +65,11 @@ export default function SideBar() {
         <div>
           {" "}
           <button
-            onClick={() => updateSelectedItem("Chats")}
+            onClick={() => {
+              updateSelectedItem("Chats");
+
+              setShowProfile(false);
+            }}
             className={styles.button}
           >
             <QuestionAnswerIcon />
@@ -63,9 +78,11 @@ export default function SideBar() {
       </div>
       <div
         style={{
+          //@ts-ignore
           background: SelectedItem == "Contacts" && "#6b6565",
           padding: "-10px",
           width: "80px",
+          //@ts-ignore
           maxHeight: width <= 1000 && "50px",
         }}
         className={`${styles.icons} ${styles.contacts}`}
@@ -73,7 +90,10 @@ export default function SideBar() {
         <div>
           {" "}
           <button
-            onClick={() => updateSelectedItem("Contacts")}
+            onClick={() => {
+              updateSelectedItem("Contacts");
+              setShowProfile(false);
+            }}
             className={styles.button}
           >
             <PermContactCalendarIcon />
@@ -82,9 +102,11 @@ export default function SideBar() {
       </div>
       <div
         style={{
+          //@ts-ignore
           background: SelectedItem == "Setting" && "#6b6565",
           padding: "-10px",
           width: "80px",
+          //@ts-ignore
           maxHeight: width <= 1000 && "50px",
         }}
         className={`${styles.icons} ${styles.setting}`}
@@ -92,7 +114,10 @@ export default function SideBar() {
         <div>
           {" "}
           <button
-            onClick={() => updateSelectedItem("Setting")}
+            onClick={() => {
+              updateSelectedItem("Setting");
+              setShowProfile(false);
+            }}
             className={styles.button}
           >
             <SettingsIcon />

@@ -41,3 +41,10 @@
   display: flex;
   justify-content: center;
 }
+
+@media (width <= 600px) {
+  .Textarea {
+    max-width: 90%;
+    padding: 10px;
+  }
+}

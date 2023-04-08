@@ -7,6 +7,7 @@ import { SearchContct } from "../contacts/Contacts";
 export default function Setting() {
   const user = useUserStore((state) => state.user);
   const [shouldEditBio, setThouldEditBio] = useState<boolean>(false);
+  const [bio, setBio] = useState<string | null>(null);
   function displayLogout() {
     pb.authStore.clear();
   }
@@ -50,14 +51,37 @@ export default function Setting() {
               {!shouldEditBio ? (
                 user.bio || "Edit your bio"
               ) : (
-                <SearchContct
-                  placeholder="new bio and Press Enter"
-                  oldBio={user.bio}
-                  updateBio={updateBio}
-                />
+                <>
+                  <SearchContct
+                    placeholder="new bio and Press Enter"
+                    oldBio={user.bio}
+                    setBio={setBio}
+                    updateBio={updateBio}
+                  />
+                  <button
+                    onClick={() => {
+                      if (bio) {
+                        updateBio(bio);
+                      }
+                    }}
+                    style={{
+                      fontSize: "0.7em",
+                      fontStyle: "italic",
+                      border: "1px solid steelblue",
+                      padding: "5px",
+                      marginTop: "5px",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    update
+                  </button>
+                </>
               )}
             </div>
-            <button onClick={() => setThouldEditBio(!shouldEditBio)}>
+            <button
+              style={{ display: shouldEditBio ? "none" : "initial" }}
+              onClick={() => setThouldEditBio(!shouldEditBio)}
+            >
               <EditIcon />
             </button>
           </div>

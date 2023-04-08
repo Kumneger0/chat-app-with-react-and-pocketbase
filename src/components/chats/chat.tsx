@@ -77,6 +77,7 @@ export default function Chat() {
                   />
                 </span>
                 <div
+                  className={styles.chatName}
                   key={user.id}
                   onClick={() => updateSelectedConversation(user.id)}
                 >

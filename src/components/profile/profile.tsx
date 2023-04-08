@@ -27,9 +27,7 @@ export default function Profile() {
         </div>
         <div className={styles.nameAndInfo}>
           <div>{user.username}</div>
-          <div onChange={editBio}>
-            {user.bio || "Edit your bio in settings"}
-          </div>
+          <div>{user.bio || "Edit your bio in settings"}</div>
         </div>
       </div>
     </>

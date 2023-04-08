@@ -1,0 +1,51 @@
+.profileWrapper {
+  width: 100%;
+}
+
+.profileWrapper h4 {
+  margin: 20px;
+  position: absolute;
+  top: 0;
+}
+
+.coverImage {
+  width: 100%;
+  height: 10rem;
+  background: blue;
+}
+
+.profilePic {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.profilePic img {
+  margin-top: -50px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+.nameAndInfo {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px auto;
+}
+
+.nameAndInfo div {
+  gap: 10px;
+}
+
+.btnCancel {
+  all: unset;
+  position: absolute;
+  top: 0;
+  right: 5px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.btnCancel:hover {
+  cursor: pointer;
+}

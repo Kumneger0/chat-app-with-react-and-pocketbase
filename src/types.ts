@@ -14,3 +14,13 @@ export interface SelectedItem {
   updateSelectedItem: (item: string | null) => void;
   updateSelectedConversation: (conversationId: string | null) => void;
 }
+
+export interface showProfile {
+  isTrue: boolean;
+  id: string;
+}
+
+export interface Contact {
+  username: string;
+  bio: string;
+}
