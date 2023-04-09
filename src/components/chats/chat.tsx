@@ -5,7 +5,6 @@ import { pb, useUserStore, useSelectedItem } from "../../App";
 import { SearchContct } from "../contacts/Contacts";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { getConversationFromPb } from "../chatArea/chatarea";
-import DeleteContactModal from "../modal/deleteChatModal";
 
 export default function Chat() {
   const user = useUserStore((state) => state.user);
@@ -13,6 +12,7 @@ export default function Chat() {
     (state) => state.updateSelectedConversation
   );
   const [chats, setChats] = useState<any[]>([]);
+  const [chatsFetching, setChatFetching] = useState<boolean>(true);
 
   async function getContactName(chatsId: string[]) {
     const allUsers = await pb
@@ -42,7 +42,10 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    getChatsFromPb();
+    (async () => {
+      await getChatsFromPb();
+      setChatFetching((prv) => false);
+    })();
   }, []);
 
   async function deleteChat(userId: string) {
@@ -101,7 +104,7 @@ export default function Chat() {
               margin: "20px auto",
             }}
           >
-            <div>No chats available</div>
+            <div>{chatsFetching ? "Loading..." : "No chats available"}</div>
           </div>
         )}
       </div>

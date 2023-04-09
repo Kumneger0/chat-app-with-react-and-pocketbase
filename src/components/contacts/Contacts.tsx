@@ -25,6 +25,7 @@ export default function Contacts() {
 
   const [contacts, setContacts] = useState<User[]>([]);
   const [allContacts, setAllContacts] = useState<User[]>([]);
+  const [LoadingContacts, setLoadingContacts] = useState<boolean>(true);
 
   const getContacts = async () => {
     const record = await pb.collection("users").getOne(user.id, {
@@ -38,11 +39,28 @@ export default function Contacts() {
         id,
       })
     );
-    setContacts(userContacts);
+    let sortedContacts: User[] = [];
+    let sorted = userContacts
+      .map(({ username }: { username: string }) => username)
+      .sort();
+
+    sorted.forEach((name) => {
+      userContacts.forEach(
+        ({ username, id }: { username: string; id: string }) => {
+          if (username == name) {
+            sortedContacts.push({ username, id });
+          }
+        }
+      );
+    });
+    setContacts(sortedContacts);
   };
 
   useEffect(() => {
-    getContacts();
+    (async () => {
+      await getContacts();
+      setLoadingContacts(false);
+    })();
   }, []);
 
   function contactAction(indx: number, action: string | undefined) {
@@ -190,7 +208,11 @@ export default function Contacts() {
             </>
           ) : (
             <>
-              <div>no contacts available</div>
+              <div>
+                {LoadingContacts
+                  ? "Loading Contacts..."
+                  : "no contacts available"}
+              </div>
             </>
           )}
         </div>

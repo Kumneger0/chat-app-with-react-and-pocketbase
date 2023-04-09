@@ -20,7 +20,7 @@ export default function Login() {
     try {
       await pb.collection("users").authWithPassword(usernameOrEmail, password);
     } catch (err) {
-      setError("There was an error while processing you request");
+      setError("Something wrong with your input");
       setIsloading(false);
     }
   };
