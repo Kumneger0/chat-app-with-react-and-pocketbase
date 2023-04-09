@@ -23,10 +23,6 @@ export async function getConversationFromPb(userId: string, myId: string) {
   return null;
 }
 
-type Callback = {
-  cb: (value: any) => boolean;
-};
-
 export default function Chatarea({
   setShowProfile,
 }: {
@@ -75,7 +71,7 @@ export default function Chatarea({
         scrollToLast();
       }
     }
-  }, [selectedConversation, update]);
+  }, [selectedConversation]);
 
   useEffect(() => {
     return () => {
@@ -146,9 +142,14 @@ export default function Chatarea({
   }
 
   pb.collection("messages").subscribe("*", (record) => {
-    console.log(record);
     if (record.record.user1 == user.id || record.record.user2 == user.id) {
-      setUpdate(!update);
+      if (
+        record.record.user1 == contactDetail?.id ||
+        record.record.user2 == contactDetail?.id
+      ) {
+        flushSync(() => setConversation(record.record));
+        scrollToLast();
+      }
     }
   });
 
