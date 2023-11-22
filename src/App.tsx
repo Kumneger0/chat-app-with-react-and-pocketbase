@@ -76,7 +76,6 @@ function App() {
   return (
     <>
 
-      <div style={{ width: '300px', height: '400px', background: 'black' }}></div>
       {user ? (
         <>
           {" "}
