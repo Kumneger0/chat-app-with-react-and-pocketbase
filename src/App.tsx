@@ -51,6 +51,9 @@ function App() {
     (state) => state.updateSelectedConversation
   );
 
+
+
+
   useEffect(() => {
     const userFromLocal = pb.authStore.model;
     if (userFromLocal) {
@@ -72,6 +75,8 @@ function App() {
 
   return (
     <>
+
+      <div style={{ width: '300px', height: '400px', background: 'black' }}></div>
       {user ? (
         <>
           {" "}
@@ -122,9 +127,8 @@ function App() {
       ) : (
         <div className={styles.authWrapper}>
           <div
-            className={`${styles.authSection} ${
-              authState == "login" ? "login" : "signup"
-            }`}
+            className={`${styles.authSection} ${authState == "login" ? "login" : "signup"
+              }`}
           >
             <authStateContext.Provider
               value={{ authState: authState, setAuthState: setAuthState }}
